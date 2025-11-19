@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html xmlns:th="http://×××w.thymeleaf.org"
+      xmlns:layout="http://×××w.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<script src="js/nest/blockChain.js"></script>
+<body>
+
+<div class="container">
+    <form id="addForm">
+        <div class="row">
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">链名称</span>
+                    <input name="chainName" class="form-control" placeholder="链名称"
+                           aria-describedby="basic-addon1" value="">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">链ID</span>
+                    <input name="chainId" class="form-control" placeholder="链ID"
+                           aria-describedby="basic-addon1" value="">
+                </div>
+            </div>
+
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">rpc节点</span>
+                    <input name="rpcNode" class="form-control" placeholder="rpc节点"
+                           aria-describedby="basic-addon1" value="">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">wss节点</span>
+                    <input name="wssNode" class="form-control" placeholder="wss节点"
+                           aria-describedby="basic-addon1" value="">
+                </div>
+            </div>
+            <div class="col-3 mt-4 prototype">
+                <div class="input-group">
+                    <span class="input-group-text">是否支持EIP1559</span>
+                    <select name="isSupportEip1559" class="selectpicker form-control"
+                            data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                        <option data-tokens="是" text="是" value="true">是</option>
+                        <option data-tokens="否" text="否" value="false">否</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3 mt-4 prototype">
+                <div class="input-group">
+                    <span class="input-group-text">是否web3j</span>
+                    <select name="isSupportWeb3j" class="selectpicker form-control"
+                            data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                        <option data-tokens="是" text="是" value="true">是</option>
+                        <option data-tokens="否" text="否" value="false">否</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3 mt-4 prototype">
+                <div class="input-group">
+                    <span class="input-group-text">是否L2</span>
+                    <select name="isL2" class="selectpicker form-control"
+                            data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                        <option data-tokens="是" text="是" value="true">是</option>
+                        <option data-tokens="否" text="否" value="false">否</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3 mt-4 prototype">
+                <div class="input-group">
+                    <span class="input-group-text">是否测试网</span>
+                    <select name="isTestnet" class="selectpicker form-control"
+                            data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                        <option data-tokens="是" text="是" value="true">是</option>
+                        <option data-tokens="否" text="否" value="false">否</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-3 mt-4">
+                <div class="input-group">
+
+                    <span class="input-group-text">RPC提供商</span>
+
+                    <select name="rpcVendor" class="selectpicker form-control"
+                            data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="">请选择</option>
+                        <th:block th:each="rpcVendor: ${rpcVendorList}">
+                            <option th:data-tokens="${rpcVendor}"
+                                    th:text="${rpcVendor}"
+                                    th:value="${rpcVendor}"></option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+
+                    <span class="input-group-text">虚拟机类型</span>
+
+                    <select name="vmType" class="selectpicker form-control"
+                            data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="">请选择</option>
+                        <th:block th:each="vmType: ${vmTypeList}">
+                            <option th:data-tokens="${vmType}"
+                                    th:text="${vmType}"
+                                    th:value="${vmType}"></option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+            <div class="col-5 mt-3">
+                <div class="input-group">
+                    <button type="button" class="btn btn-primary m-2" id="search">查询</button>
+<!--                    <button type="button" class="btn btn-success m-2" id="add">添加</button>-->
+                    <button type="button" class="btn btn-danger m-2" id="delete">删除</button>
+<!--                    <button type="button" class="btn btn-sm btn-outline-dark m-2" id="import">导入</button>-->
+<!--                    <button type="button" class="btn btn-sm btn-outline-dark m-2" id="export">导出</button>-->
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <table id="blockChainList" class="stripe" style="font-size: 12px">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" name="select_all" value="1" class="example-select-all"></th>
+                    <th>链ID</th>
+                    <th>链名称</th>
+                    <th>是否eip1559</th>
+                    <th>是否web3j</th>
+                    <th>是否二层网络</th>
+                    <th>是否测试网</th>
+                    <th>rpc供应商</th>
+                    <!--                    <th>ip供应商</th>-->
+                    <th>虚拟机</th>
+                    <th>rpc节点</th>
+                    <th>wss节点</th>
+                    <th>区块浏览器</th>
+                    <th>创建时间</th>
+                    <th>修改时间</th>
+                </tr>
+                </thead>
+
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="modal fade " id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content  ">
+            <div class="modal-header ">
+                <h5 class="modal-title">编辑</h5>
+            </div>
+
+            <div class="modal-body" style="font-size:xx-small">
+                <form id="editForm">
+                    <div class="row">
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">ID</span>
+                                <input name="id" class="form-control" readonly
+                                       aria-label="start"
+                                       aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">链ID</span>
+                                <input name="chainId" class="form-control" placeholder="链ID"
+                                       aria-describedby="basic-addon1" value="">
+                            </div>
+                        </div>
+                        <div class="col-4 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">链名称</span>
+                                <input name="chainName" class="form-control" placeholder="链名称"
+                                       aria-describedby="basic-addon1" value="">
+                            </div>
+                        </div>
+                        <div class="col-8 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">rpc节点</span>
+                                <input name="rpcNode" class="form-control" placeholder="rpc节点"
+                                       aria-describedby="basic-addon1" value="">
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">wss节点</span>
+                                <input name="wssNode" class="form-control" placeholder="wss节点"
+                                       aria-describedby="basic-addon1" value="">
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">区块浏览器</span>
+                                <input name="blockExplorerUrl" class="form-control" placeholder="区块浏览器"
+                                       aria-describedby="basic-addon1" value="">
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">是否支持EIP1559</span>
+                                <select name="isSupportEip1559" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                                    <option data-tokens="是" text="是" value="true">是</option>
+                                    <option data-tokens="否" text="否" value="false">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">是否web3j</span>
+                                <select name="isSupportWeb3j" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                                    <option data-tokens="是" text="是" value="true">是</option>
+                                    <option data-tokens="否" text="否" value="false">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-3 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">是否L2</span>
+                                <select name="isL2" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                                    <option data-tokens="是" text="是" value="true">是</option>
+                                    <option data-tokens="否" text="否" value="false">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-3 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">是否L2</span>
+                                <select name="isL2" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                                    <option data-tokens="是" text="是" value="true">是</option>
+                                    <option data-tokens="否" text="否" value="false">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">是否测试网</span>
+                                <select name="isTestnet" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                                    <option data-tokens="是" text="是" value="true">是</option>
+                                    <option data-tokens="否" text="否" value="false">否</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+
+                                <span class="input-group-text">RPC提供商</span>
+
+                                <select name="rpcVendor" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value="">请选择</option>
+                                    <th:block th:each="rpcVendor: ${rpcVendorList}">
+                                        <option th:data-tokens="${rpcVendor}"
+                                                th:text="${rpcVendor}"
+                                                th:value="${rpcVendor}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+
+                                <span class="input-group-text">虚拟机类型</span>
+
+                                <select name="vmType" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value="">请选择</option>
+                                    <th:block th:each="vmType: ${vmTypeList}">
+                                        <option th:data-tokens="${vmType}"
+                                                th:text="${vmType}"
+                                                th:value="${vmType}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <div class="input-group">
+                        <button type="button" class="btn btn-primary m-2" id="update">更新</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div th:replace="~{fragments/footer :: footer}">...</div>
+    <div class="modal fade " id="exportModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content  ">
+                <div class="modal-header ">
+                    <h5 class="modal-title">导出操作</h5>
+                </div>
+
+                <div class="modal-body" style="font-size:xx-small">
+                    <form>
+                        <div class="row">
+
+                            <div class="col-12 mt-4">
+                                <div class="input-group">
+                                    <span class="input-group-text">操作-JSON</span>
+                                    <textarea id="exportJSON" class="form-control"
+                                              aria-describedby="basic-addon1" value="" rows="15"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-primary m-2" id="copyExportBtn">复制</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " id="importModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content  ">
+                <div class="modal-header ">
+                    <h5 class="modal-title">导入操作</h5>
+                </div>
+
+                <div class="modal-body" style="font-size:xx-small">
+                    <form>
+                        <div class="row">
+
+                            <div class="col-12 mt-4">
+                                <div class="input-group">
+                                    <span class="input-group-text">操作-JSON</span>
+                                    <textarea id="importJSON" class="form-control"
+                                              aria-describedby="basic-addon1" rows="10"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="modal-footer d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary m-2" id="importBtn">导入</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+
+
+</script>
+</body>
+</html>

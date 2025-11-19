@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nest.diamond.mapper.ContractInstanceMapper">
+
+    <select id="search" resultType="com.nest.diamond.model.domain.ContractInstance" parameterType="hashmap">
+        select * from contract_instance
+        <where>
+            <if test="protocolId != null">
+                and protocol_id = #{protocolId}
+            </if>
+            <if test="contractId != null">
+                and contract_id = #{contractId}
+            </if>
+            <if test="chainId != null">
+                and chain_id = #{chainId}
+            </if>
+            <if test="contractName != null and contractName != null">
+                and contract_name like concat('%', #{contractName}, '%')
+            </if>
+            <if test="address != null and address != null">
+                and address like concat('%', #{address}, '%')
+            </if>
+            <if test="isMonitor != null">
+                and is_monitor = #{isMonitor}
+            </if>
+        </where>
+    </select>
+</mapper>

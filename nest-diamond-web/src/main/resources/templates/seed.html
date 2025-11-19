@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://×××w.thymeleaf.org"
+      xmlns:layout="http://×××w.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<script src="js/nest/seed.js"></script>
+<body>
+
+<div class="container">
+    <form id="addForm">
+        <div class="row">
+
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">钱包供应商</span>
+                    <select name="walletVendor" class="selectpicker form-control"
+                            data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="">请选择</option>
+                        <th:block th:each="walletVendor, iterStat: ${walletVendorList}">
+                            <option th:data-tokens="${walletVendor}"
+                                    th:text="${walletVendor}"
+                                    th:value="${walletVendor}"
+                                    th:selected="${iterStat.index == 0}"></option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">钱包生成类型</span>
+                    <select name="walletGenerateType" class="selectpicker form-control"
+                            data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                        <option data-tokens="单个种子" text="单个种子" value="SINGLE_SEED" selected>单个种子</option>
+                        <option data-tokens="批量种子" text="批量种子" value="MULTI_SEED">批量种子</option>
+                        <option data-tokens="批量私钥" text="批量私钥" value="MULTI_PRIVATE_KEY">批量私钥</option>
+                        <option data-tokens="批量地址" text="批量地址" value="MULTI_ADDRESS">批量地址</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">单种子钱包数量</span>
+                    <input name="count" class="form-control" placeholder="500"
+                           aria-describedby="basic-addon1" value="500">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">是否保留种子</span>
+                    <select name="isReserveSeed" class="selectpicker form-control"
+                            data-live-search="true">
+                        <option data-tokens="是" text="是" value="true" >是</option>
+                        <option data-tokens="否" text="否" value="false" selected>否</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-4 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">种子列表</span>
+                    <textarea name="seedWordsList" class="form-control" placeholder="请输入种子"
+                              aria-describedby="basic-addon1" value="" rows="2"></textarea>
+                    <input id="hiddenSeedId" type="hidden"/>
+                </div>
+            </div>
+            <div class="col-4 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">私钥列表</span>
+                    <textarea name="privateKeyList" class="form-control" placeholder="请输私钥"
+                              aria-describedby="basic-addon1" value="" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="col-4 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">地址列表</span>
+                    <textarea name="addressList" class="form-control" placeholder="请输地址"
+                              aria-describedby="basic-addon1" value="" rows="2"></textarea>
+                </div>
+            </div>
+
+
+            <div class="col-4 mt-4">
+                <div class="input-group">
+                    <button type="button" class="btn btn-primary m-2" id="search">查询</button>
+                    <button type="button" class="btn btn-success m-2" id="addSeed">添加</button>
+                    <button type="button" class="btn btn-danger m-2" id="delete">删除</button>
+                    <button type="button" class="btn btn-outline-dark m-2" id="generateSeed">生成种子</button>
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <table id="seedList" class="stripe" style="font-size: 12px">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
+                    <th>前缀</th>
+                    <th>备注</th>
+                    <th>创建时间</th>
+                </tr>
+                </thead>
+
+            </table>
+        </div>
+
+    </div>
+
+
+</div>
+
+<div class="modal fade " id="showSeedModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content  ">
+            <div class="modal-header ">
+                <h5 class="modal-title">种子</h5>
+            </div>
+
+            <div class="modal-body" style="font-size:xx-small">
+                <div class="card col-12 mt-4">
+                    <div class="card-body">
+                        <p id="showSeed" class="font-monospace fs-4 mb-0">
+                        </p>
+                    </div>
+                </div>
+<!--                <div class="col-12 mt-4">-->
+<!--                    <div class="input-group">-->
+<!--                        <kbd id="showSeed" class="input-group-text"></kbd>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+</script>
+<div th:replace="~{fragments/footer :: footer}">...</div>
+</body>
+</html>

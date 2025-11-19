@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nest.diamond.mapper.AccountMapper">
+    <resultMap id="accountResultMap" type="com.nest.diamond.model.domain.Account">
+<!--        <result property="privateKey" column="private_key" typeHandler="com.nest.ib.config.mybatis.AESEncryptHandler"/>-->
+    </resultMap>
+    <select id="search" resultMap="accountResultMap" parameterType="hashmap">
+        select a.*
+        from account a
+        <where>
+            <if test="seedId != null">
+                and a.seed_id = #{seedId}
+            </if>
+            <if test="startHDIndex != null and endHDIndex != null">
+                and a.hd_index <![CDATA[ >= ]]> #{startHDIndex}
+                and a.hd_index <![CDATA[ <= ]]> #{endHDIndex}
+            </if>
+            <if test="adsStartSequence != null and adsEndSequence != null">
+                and a.ads_browser_id <![CDATA[ >= ]]> #{adsStartSequence}
+                and a.ads_browser_id <![CDATA[ <= ]]> #{adsEndSequence}
+            </if>
+
+            <if test="address != null and address != ''">
+                and a.address = #{address}
+            </if>
+
+        </where>
+    </select>
+
+</mapper>

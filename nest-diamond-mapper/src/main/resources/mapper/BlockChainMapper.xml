@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nest.diamond.mapper.BlockchainMapper">
+
+    <select id="search" resultType="com.nest.diamond.model.domain.BlockChain" parameterType="hashmap">
+        select * from block_chain
+        <where>
+            <if test="chainName != null and chainName != ''">
+                and chain_name like concat('%', #{chainName}, '%')
+            </if>
+            <if test="chainId != null">
+                and chain_id = #{chainId}
+            </if>
+        </where>
+    </select>
+</mapper>

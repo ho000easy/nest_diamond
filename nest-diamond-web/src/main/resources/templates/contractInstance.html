@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://×××w.thymeleaf.org"
+      xmlns:layout="http://×××w.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<script src="js/nest/contractInstance.js"></script>
+<body>
+
+<div class="container">
+    <form id="addForm">
+        <div class="row">
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">协议</span>
+                    <select id="protocolId" name="protocolId" class="selectpicker form-control" data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="">请选择</option>
+
+                        <th:block th:each="protocol: ${protocols}">
+                            <option th:data-tokens="${protocol.name}"
+                                    th:text="${protocol.name}"
+                                    th:value="${protocol.id}"
+                                    th:selected="${protocol.id}==${protocolId}"></option>
+                        </th:block>
+
+                    </select>
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">合约名称</span>
+                    <input id="initContractId" type="hidden" th:value="${contractId}">
+                    <select id="contractId" name="contractId" class="selectpicker form-control" data-live-search="true">
+
+                    </select>
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">链</span>
+
+                    <select name="chainId" class="selectpicker form-control" data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="">请选择</option>
+
+                        <th:block th:each="blockChain: ${blockChainList}">
+                            <option th:data-tokens="${blockChain.chainName}"
+                                    th:text="${blockChain.chainName}"
+                                    th:value="${blockChain.chainId}"></option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+            <div class="col-5 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">合约地址</span>
+                    <input name="address" class="form-control" placeholder="合约地址"
+                           aria-describedby="basic-addon1" th:value="${contractAddress}">
+                </div>
+            </div>
+
+
+            <div class="col-4 mt-3">
+                <div class="input-group">
+                    <button type="button" class="btn btn-primary m-2" id="search">查询</button>
+<!--                    <button type="button" class="btn btn-success m-2" id="add">添加</button>-->
+                    <button type="button" class="btn btn-danger m-2" id="delete">删除</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <table id="contractInstanceList" class="stripe" style="font-size: 12px">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" name="select_all" value="1" class="example-select-all"></th>
+                    <th>协议名称</th>
+                    <th>合约名称</th>
+                    <th>链</th>
+                    <th>合约地址</th>
+                    <th>创建时间</th>
+                    <th>修改时间</th>
+                </tr>
+                </thead>
+
+            </table>
+        </div>
+
+    </div>
+
+
+
+</div>
+<div class="modal fade " id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content  ">
+            <div class="modal-header ">
+                <h5 class="modal-title">编辑</h5>
+            </div>
+
+            <div class="modal-body" style="font-size:xx-small">
+                <form id="editForm">
+                    <div class="row">
+                        <div class="col-3 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">ID</span>
+                                <input name="id" class="form-control" readonly
+                                       aria-label="start"o
+                                       aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-3 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">链</span>
+
+                                <select name="chainId" class="selectpicker form-control" data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value="">请选择</option>
+
+                                    <th:block th:each="blockChain: ${blockChainList}">
+                                        <option th:data-tokens="${blockChain.chainName}"
+                                                th:text="${blockChain.chainName}"
+                                                th:value="${blockChain.chainId}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">合约名称</span>
+                                <input name="contractName" class="form-control"
+                                       placeholder="合约名称"
+                                       aria-label="start"
+                                       aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">合约地址</span>
+                                <input name="address" class="form-control"
+                                       placeholder="合约地址"
+                                       aria-label="start"
+                                       aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">gasPrice因子</span>
+                                <input name="minGasPriceFactor" class="form-control" placeholder="最小值"
+                                       aria-describedby="basic-addon1" value="">
+                                <input name="maxGasPriceFactor" class="form-control" placeholder="最大值"
+                                       aria-describedby="basic-addon1" value="">
+                            </div>
+
+                        </div>
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">gasLimit因子</span>
+                                <input name="minGasLimitFactor" class="form-control" placeholder="最小值"
+                                       aria-describedby="basic-addon1" value="">
+                                <input name="maxGasLimitFactor" class="form-control" placeholder="最大值"
+                                       aria-describedby="basic-addon1" value="">
+                            </div>
+
+                        </div>
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">max=priorityFee</span>
+                                <select name="isMaxPriorityFeeEqualsMaxFee" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value=""  selected>请选择</option>
+                                    <option data-tokens="是" text="是" value="true">是</option>
+                                    <option data-tokens="否" text="否" value="false">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">gas市场</span>
+                                <select name="gasMarketLevel" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
+                                    <th:block th:each="gasMarketLevel: ${gasMarketLevelList}">
+                                        <option th:data-tokens="${gasMarketLevel}"
+                                                th:text="${gasMarketLevel}"
+                                                th:value="${gasMarketLevel}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">交易类型</span>
+                                <select name="txType" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value=""  selected>请选择</option>
+                                    <option data-tokens="EIP1559" text="EIP1559" value="EIP1559">EIP1559</option>
+                                    <option data-tokens="LEGACY" text="LEGACY" value="LEGACY">LEGACY</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">是否监控</span>
+                                <select name="isMonitor" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="请选择" text="请选择" value=""  selected>请选择</option>
+                                    <option data-tokens="是" text="是" value="true">是</option>
+                                    <option data-tokens="否" text="否" value="false">否</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="input-group">
+                    <button type="button" class="btn btn-primary m-2" id="update">更新</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+</script>
+<div th:replace="~{fragments/footer :: footer}">...</div>
+</body>
+</html>

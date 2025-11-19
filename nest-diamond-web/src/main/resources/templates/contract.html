@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://×××w.thymeleaf.org"
+      xmlns:layout="http://×××w.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<script src="js/nest/contract.js"></script>
+<body>
+
+<div class="container">
+    <form id="addForm">
+        <div class="row">
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">协议</span>
+                    <select name="protocolId" class="selectpicker form-control" data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="">请选择</option>
+                        <th:block th:each="protocol: ${protocols}">
+                            <option th:data-tokens="${protocol.name}"
+                                    th:text="${protocol.name}"
+                                    th:value="${protocol.id}" th:selected="${protocolId}==${protocol.id}"></option>
+                        </th:block>
+
+                    </select>
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">合约名称</span>
+                    <input name="name" class="form-control" placeholder="合约名称"
+                           aria-describedby="basic-addon1" value="">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">备注</span>
+                    <input name="remark" class="form-control" placeholder="备注"
+                           aria-describedby="basic-addon1" value="">
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-4 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">abi</span>
+                    <textarea class="form-control rounded-0" id="abi" rows="3"></textarea>
+
+                </div>
+            </div>
+            <div class="col-2 mt-5"></div>
+            <div class="col-5 mt-5">
+                <div class="input-group">
+                    <button type="button" class="btn btn-primary m-2" id="search">查询</button>
+<!--                    <button type="button" class="btn btn-success m-2" id="add">添加</button>-->
+                    <button type="button" class="btn btn-danger m-2" id="delete">删除</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <table id="contractList" class="stripe" style="font-size: 12px">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" name="select_all" value="1" class="example-select-all"></th>
+                    <th>合约名称</th>
+                    <th>协议名称</th>
+                    <th>备注</th>
+                    <th>abi</th>
+                    <th>创建时间</th>
+                    <th>修改时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+
+            </table>
+        </div>
+
+    </div>
+
+
+
+</div>
+
+<div class="modal fade " id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content  ">
+            <div class="modal-header ">
+                <h5 class="modal-title">编辑</h5>
+            </div>
+
+            <div class="modal-body" style="font-size:xx-small">
+                <form id="editForm">
+                    <div class="row">
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">ID</span>
+                                <input name="id" class="form-control" readonly
+                                       aria-label="start"
+                                       aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">合约名称</span>
+                                <input name="name" class="form-control" placeholder="合约名称"
+                                       aria-describedby="basic-addon1" value="">
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">备注</span>
+                                <input name="remark" class="form-control" placeholder="备注"
+                                       aria-describedby="basic-addon1" value="">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <div class="input-group">
+                        <button type="button" class="btn btn-primary m-2" id="update">更新</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+</script>
+<div th:replace="~{fragments/footer :: footer}">...</div>
+</body>
+</html>

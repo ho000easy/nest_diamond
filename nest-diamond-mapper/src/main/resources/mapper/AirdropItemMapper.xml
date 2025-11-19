@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nest.diamond.mapper.AirdropItemMapper">
+    <resultMap id="AirdropItemExtendResultMap" type="com.nest.diamond.model.bo.AirdropItemExtend">
+        <result property="privateKey" column="private_key" typeHandler="com.nest.diamond.common.config.AESEncryptHandler"/>
+        <result property="seed" column="seed" typeHandler="com.nest.diamond.common.config.AESEncryptHandler"/>
+    </resultMap>
+
+    <resultMap id="AccountMap" type="com.nest.diamond.model.domain.Account">
+        <result property="privateKey" column="private_key" typeHandler="com.nest.diamond.common.config.AESEncryptHandler"/>
+        <result property="seed" column="seed" typeHandler="com.nest.diamond.common.config.AESEncryptHandler"/>
+    </resultMap>
+
+    <select id="search" resultMap="AirdropItemExtendResultMap"  parameterType="hashmap">
+        select ai.*, a.private_key, a.seed
+            from airdrop_item ai
+            left join account a on a.id = ai.account_id
+            left join seed s on a.seed_id = s.id
+
+        <where>
+            <include refid="query_user_where"></include>
+        </where>
+            order by ai.id asc
+    </select>
+
+    <select id="searchAccount" resultMap="AccountMap"  parameterType="hashmap">
+        select a.*
+        from airdrop_item ai
+        left join account a on a.id = ai.account_id
+        <where>
+            <include refid="query_user_where"></include>
+
+        </where>
+        order by ai.id asc
+    </select>
+
+    <select id="selectByAirdropIdAndAccountIds" resultType="com.nest.diamond.model.domain.AirdropItem">
+        select * FROM airdrop_item ai
+        WHERE
+
+            ai.airdrop_id = #{airdropId}
+
+        <if test="null != accountIds and accountIds.size > 0">
+            AND ai.account_id in
+            <foreach item="item" index="index" collection="accountIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            order by field(ai.account_id,
+            <foreach item="item" index="index" collection="accountIds" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+    </select>
+
+
+    <sql id="query_user_where">
+        <if test="airdropId != null">
+            and ai.airdrop_id = #{airdropId}
+        </if>
+
+        <if test="startSequence != null and endSequence != null">
+            and ai.`sequence` <![CDATA[ >= ]]> #{startSequence}
+            and ai.`sequence` <![CDATA[ <= ]]> #{endSequence}
+        </if>
+
+        <if test="seedId != null">
+            and a.seed_id = #{seedId}
+        </if>
+
+
+        <if test="address != null and address != ''">
+            and a.address like concat('%', #{address}, '%')
+        </if>
+
+        <if test="sequenceList != null and sequenceList.size() > 0">
+            and ai.`sequence` IN
+            <foreach collection="sequenceList" item="sequence" open="(" separator="," close=")">
+                #{sequence}
+            </foreach>
+        </if>
+    </sql>
+
+</mapper>
