@@ -1,4 +1,4 @@
-package com.nest.diamond.mapper.config;
+package com.nest.diamond.config;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;

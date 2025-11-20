@@ -1,0 +1,32 @@
+<!-- src/main/resources/mapper/SignatureLogMapper.xml -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nest.diamond.mapper.SignatureLogMapper">
+
+    <select id="search" resultType="com.nest.diamond.model.domain.SignatureLog">
+        SELECT * FROM signature_log
+        <where>
+            <if test="address != null and address != ''">
+                AND address = #{address}
+            </if>
+            <if test="bizOrderNo != null and bizOrderNo != ''">
+                AND biz_order_no = #{bizOrderNo}
+            </if>
+            <if test="airdropOperationId != null">
+                AND airdrop_operation_id = #{airdropOperationId}
+            </if>
+            <if test="contractInstanceSnapshotId != null">
+                AND contract_instance_snapshot_id = #{contractInstanceSnapshotId}
+            </if>
+            <if test="signType != null">
+                AND sign_type = #{signType}
+            </if>
+            <if test="signTimeBegin != null">
+                AND sign_time >= #{signTimeBegin}
+            </if>
+            <if test="signTimeEnd != null">
+                AND sign_time &lt;= #{signTimeEnd}
+            </if>
+        </where>
+        ORDER BY sign_time DESC
+    </select>
+</mapper>

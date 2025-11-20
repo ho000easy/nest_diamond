@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<script src="/js/nest/workOrder.js"></script>
+<body>
+
+<div class="container">
+
+    <form id="searchForm">
+        <div class="row">
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">工单名称</span>
+                    <input name="name" class="form-control" placeholder="工单名称"
+                           aria-describedby="basic-addon1" value="">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">工单号</span>
+                    <input name="workOrderNo" class="form-control" placeholder="工单号"
+                           aria-describedby="basic-addon1" value="">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">状态</span>
+                    <select name="status" class="selectpicker form-control" data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="">请选择</option>
+                        <th:block th:each="workOrder: ${workOrderStatusList}">
+                            <option th:data-tokens="${workOrder.desc}"
+                                    th:text="${workOrder.desc}"
+                                    th:value="${workOrder.name}"></option>
+                        </th:block>
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-3 mt-3">
+                <div class="input-group">
+                    <button type="button" class="btn btn-primary m-2" id="searchBtn">查询</button>
+                    <button type="button" class="btn btn-outline-dark m-2" id="approveBtn">审批通过</button>
+                    <button type="button" class="btn btn-outline-dark m-2" id="rejectBtn">拒绝</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <table id="workOrderTable"  class="stripe" style="font-size: 12px">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" name="select_all" value="1" class="example-select-all"></th>
+                    <th>工单号</th>
+                    <th>工单名称</th>
+                    <th>空投操作</th>
+                    <th>空投项目</th>
+                    <th>序列号</th>
+                    <th>生效时间</th>
+                    <th>合约实例快照</th>
+                    <th>状态</th>
+                    <th>申请人</th>
+                    <th>申请时间</th>
+                    <th>创建时间</th>
+                    <th>修改时间</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- 创建工单 Modal（可复用你现有的弹窗风格） -->
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">创建空投工单</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createForm">
+                    <div class="mb-3">
+                        <label class="form-label">工单名称</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">空投项目ID</label>
+                        <input type="number" class="form-control" name="airdropId" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">起始序列</label>
+                            <input type="number" class="form-control" name="startSequence" required>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">结束序列</label>
+                            <input type="number" class="form-control" name="endSequence" required>
+                        </div>
+                    </div>
+                    <!-- 合约实例多选等复杂逻辑可后续加 -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="saveBtn">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

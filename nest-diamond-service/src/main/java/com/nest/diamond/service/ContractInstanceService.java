@@ -15,13 +15,10 @@ import java.util.List;
 public class ContractInstanceService {
     @Autowired
     private ContractInstanceIService contractInstanceIService;
-
     @Autowired
     private ProtocolService protocolService;
-
     @Autowired
     private ContractService contractService;
-
     @Autowired
     private BlockchainService blockchainService;
 
@@ -32,6 +29,10 @@ public class ContractInstanceService {
 
     public ContractInstance findById(Long id){
         return contractInstanceIService.getById(id);
+    }
+
+    public List<ContractInstance> findByIds(List<Long> ids){
+        return contractInstanceIService.listByIds(ids);
     }
 
     public ContractInstance findBy(Long chainId, String contractName){

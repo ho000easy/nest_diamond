@@ -272,3 +272,38 @@ let textApplied = sequenceRangesWithCount(dt, { applied: true });
 // 显示
 $('#sequenceRanges').text(textAll);
 
+function renderSequenceList(raw) {
+    const arr = raw.split(',').map(s => s.trim()).filter(Boolean);
+
+    // 把数组转成“每行5个、逗号分隔、行末换行”的 HTML
+    const toHtml = (list) => {
+        let out = [];
+        for (let i = 0; i < list.length; i++) {
+            out.push(list[i]);
+            if (i % 5 === 4 && i !== list.length - 1) out.push('<br>');
+            else if (i !== list.length - 1) out.push(', ');
+        }
+        return out.join('');
+    };
+
+    const maxShow = 10; // 3行×5个
+    const needToggle = arr.length > maxShow;
+    const shortHtml = toHtml(arr.slice(0, maxShow));
+
+    if (!needToggle) return `<div class="seq-wrapper"><span class="seq-short">${shortHtml}</span></div>`;
+
+    // 提前算好完整 HTML，点击时直接切换（也可按需生成）
+    const fullHtml = toHtml(arr);
+    const more = arr.length - maxShow;
+
+    return `
+      <div class="seq-wrapper" data-expanded="0" data-count="${arr.length}">
+        <span class="seq-short">${shortHtml}</span>
+        <span class="seq-full d-none">${fullHtml}</span>
+        <div>
+          <button type="button" class="btn btn-link btn-sm p-0 seq-toggle">展开（+${more}）</button>
+        </div>
+      </div>
+    `;
+}
+

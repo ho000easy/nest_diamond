@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<script src="/js/nest/signatureLog.js"></script>
+<body>
+
+<div class="container">
+    <form id="addForm">
+        <div class="row">
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">地址</span>
+                    <input name="address" class="form-control" placeholder="钱包地址">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">业务订单号</span>
+                    <input name="bizOrderNo" class="form-control" placeholder="业务订单号">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">空投操作名称</span>
+                    <input name="airdropOperationName" class="form-control" placeholder="空投操作名称">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">合约地址</span>
+                    <input name="contractAddress" class="form-control" placeholder="合约地址">
+                </div>
+            </div>
+
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">链</span>
+                    <select name="chainId" class="selectpicker form-control" data-live-search="true">
+                        <option value="">请选择</option>
+                        <th:block th:each="chain : ${chainList}">
+                            <option th:value="${chain.chainId}" th:text="${chain.chainName}"></option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">签名类型</span>
+                    <select name="signType" class="selectpicker form-control">
+                        <option value="">所有类型</option>
+                        <th:block th:each="type : ${signTypeList}">
+                            <option th:value="${type.code}" th:text="${type.desc}"></option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-3 mt-3">
+                <button type="button" class="btn btn-primary m-2" id="search">查询</button>
+                <button type="button" class="btn btn-danger m-2" id="delete">删除</button>
+            </div>
+        </div>
+    </form>
+
+    <br><br>
+    <div class="row">
+        <div class="col-12">
+            <table id="signatureLogList" class="stripe" style="font-size: 12px">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class="example-select-all"></th>
+                    <th>地址</th>
+                    <th>业务订单号</th>
+                    <th>空投操作ID</th>
+                    <th>合约地址</th>
+                    <th>链ID</th>
+                    <th>链名称</th>
+                    <th>签名类型</th>
+                    <th>签名时间</th>
+                    <th>创建时间</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

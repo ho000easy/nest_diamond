@@ -1,4 +1,4 @@
-package com.nest.diamond.mapper.config;
+package com.nest.diamond.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

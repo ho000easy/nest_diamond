@@ -1,0 +1,29 @@
+<!-- src/main/resources/mapper/ContractInstanceSnapshotMapper.xml -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nest.diamond.mapper.ContractInstanceSnapshotMapper">
+
+    <select id="search" resultType="com.nest.diamond.model.domain.ContractInstanceSnapshot">
+        SELECT * FROM contract_instance_snapshot
+        <where>
+            <if test="contractInstanceId != null">
+                AND contract_instance_id = #{contractInstanceId}
+            </if>
+            <if test="workOrderNo != null and workOrderNo != ''">
+                AND work_order_no = #{workOrderNo}
+            </if>
+            <if test="version != null">
+                AND version = #{version}
+            </if>
+            <if test="protocolId != null">
+                AND protocol_id = #{protocolId}
+            </if>
+            <if test="contractId != null">
+                AND contract_id = #{contractId}
+            </if>
+            <if test="chainId != null">
+                AND chain_id = #{chainId}
+            </if>
+        </where>
+        ORDER BY version DESC, create_time DESC
+    </select>
+</mapper>
