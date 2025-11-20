@@ -15,12 +15,8 @@ public class Airdrop {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-
     private String name;
     private String remark;
-
-    private Date startTime;
-    private Date endTime;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

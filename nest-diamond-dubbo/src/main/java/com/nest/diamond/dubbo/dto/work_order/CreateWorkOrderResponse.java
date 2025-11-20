@@ -1,5 +1,5 @@
 // src/main/java/com/nest/diamond/dubbo/dto/CreateWorkOrderResponse.java
-package com.nest.diamond.dubbo.dto;
+package com.nest.diamond.dubbo.dto.work_order;
 
 import lombok.Data;
 

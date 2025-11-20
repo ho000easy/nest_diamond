@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 @Getter

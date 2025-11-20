@@ -1,4 +1,4 @@
-package com.nest.diamond.dubbo.dto;
+package com.nest.diamond.dubbo.dto.sign;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

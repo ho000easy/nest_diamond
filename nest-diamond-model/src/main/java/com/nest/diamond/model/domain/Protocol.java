@@ -2,7 +2,6 @@ package com.nest.diamond.model.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.nest.diamond.common.enums.ProtocolVendor;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +14,6 @@ public class Protocol {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    @NotBlank(message = "协议名称不能为空")
     private String name;
     private String website;
     private String github;

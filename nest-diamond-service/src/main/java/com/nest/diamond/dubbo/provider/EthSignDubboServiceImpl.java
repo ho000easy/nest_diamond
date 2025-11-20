@@ -4,7 +4,7 @@ import com.nest.diamond.common.enums.SignType;
 import com.nest.diamond.common.util.JsonUtils;
 import com.nest.diamond.common.util.SignUtil;
 import com.nest.diamond.dubbo.api.EthSignDubboService;
-import com.nest.diamond.dubbo.dto.*;
+import com.nest.diamond.dubbo.dto.sign.*;
 import com.nest.diamond.model.domain.*;
 import com.nest.diamond.service.*;
 import org.apache.commons.lang3.StringUtils;

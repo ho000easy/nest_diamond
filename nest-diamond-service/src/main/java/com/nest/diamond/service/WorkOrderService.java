@@ -2,8 +2,6 @@
 package com.nest.diamond.service;
 
 import com.nest.diamond.common.enums.WorkOrderStatus;
-import com.nest.diamond.dubbo.dto.SignEip712MessageRequest;
-import com.nest.diamond.dubbo.dto.SignRawTransactionRequest;
 import com.nest.diamond.iservice.WorkOrderIService;
 import com.nest.diamond.model.domain.Account;
 import com.nest.diamond.model.domain.ContractInstanceSnapshot;

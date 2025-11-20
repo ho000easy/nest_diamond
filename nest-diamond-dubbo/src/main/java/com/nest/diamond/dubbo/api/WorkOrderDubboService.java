@@ -1,8 +1,8 @@
 // src/main/java/com/nest/diamond/dubbo/api/WorkOrderDubboService.java
 package com.nest.diamond.dubbo.api;
 
-import com.nest.diamond.dubbo.dto.CreateWorkOrderRequest;
-import com.nest.diamond.dubbo.dto.CreateWorkOrderResponse;
+import com.nest.diamond.dubbo.dto.work_order.CreateWorkOrderRequest;
+import com.nest.diamond.dubbo.dto.work_order.CreateWorkOrderResponse;
 import jakarta.validation.Valid;
 
 /**

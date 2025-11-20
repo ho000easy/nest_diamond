@@ -1,6 +1,6 @@
 package com.nest.diamond.dubbo.api;
 
-import com.nest.diamond.dubbo.dto.*;
+import com.nest.diamond.dubbo.dto.sign.*;
 import jakarta.validation.Valid;
 
 public interface EthSignDubboService {
