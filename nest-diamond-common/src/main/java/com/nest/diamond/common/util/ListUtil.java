@@ -160,6 +160,12 @@ public class ListUtil {
                 : list.stream().map(String::valueOf).collect(Collectors.joining(","));
     }
 
+    public static String longsToCsv(List<Long> list) {
+        return (list == null || list.isEmpty())
+                ? ""
+                : list.stream().map(String::valueOf).collect(Collectors.joining(","));
+    }
+
     public interface ConsecutivePredication<E, C>{
         Boolean test(E element, C comparison);
     }

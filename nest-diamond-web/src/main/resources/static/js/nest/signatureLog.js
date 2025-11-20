@@ -3,8 +3,8 @@ $(document).ready(function () {
     $('select').selectpicker();
 
     let columns = [
-        'id', 'address', 'bizOrderNo', 'airdropOperationId',
-        'contractAddress', 'chainId', 'chainName',
+        'id', 'address', 'bizOrderNo', 'airdropOperationName',
+        'contractAddress', 'chainName',
         'signType', 'signTime', 'createTime'
     ];
 

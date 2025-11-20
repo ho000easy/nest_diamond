@@ -1,6 +1,8 @@
 // ContractInstanceSnapshotIServiceImpl.java
 package com.nest.diamond.iservice.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nest.diamond.iservice.ContractInstanceSnapshotIService;
 import com.nest.diamond.mapper.ContractInstanceSnapshotMapper;
@@ -22,6 +24,15 @@ public class ContractInstanceSnapshotIServiceImpl
     @Override
     public List<ContractInstanceSnapshot> search(ContractInstanceSnapshotQuery query) {
         return baseMapper.search(query);
+    }
+
+    @Override
+    public ContractInstanceSnapshot findByChainIdAndContractAddress(String workOrderNo, Long chainId, String contractAddress) {
+        LambdaQueryWrapper<ContractInstanceSnapshot> queryWrapper = new QueryWrapper<ContractInstanceSnapshot>().lambda();
+        queryWrapper.eq(ContractInstanceSnapshot::getWorkOrderNo, workOrderNo);
+        queryWrapper.eq(ContractInstanceSnapshot::getChainId, chainId);
+        queryWrapper.eq(ContractInstanceSnapshot::getAddress, contractAddress);
+        return super.getOne(queryWrapper);
     }
 
 }

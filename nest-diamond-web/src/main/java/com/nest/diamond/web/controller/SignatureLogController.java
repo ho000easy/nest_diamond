@@ -1,4 +1,3 @@
-// src/main/java/com/nest/diamond/web/controller/SignatureLogController.java
 package com.nest.diamond.web.controller;
 
 import com.nest.diamond.common.enums.SignType;
@@ -11,6 +10,7 @@ import com.nest.diamond.web.vo.DataTableVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,12 +25,12 @@ public class SignatureLogController {
     private SignatureLogService signatureLogService;
 
     @GetMapping
-    public String signatureLog(org.springframework.ui.Model model) {
-        // 渲染链ID下拉框（假设你有区块链服务）
-        model.addAttribute("chainList", blockchainService.allChains());
-        // 渲染签名类型下拉框
-        model.addAttribute("signTypeList", Arrays.asList(SignType.values()));
-        return "signatureLog"; // thymeleaf 页面
+    public ModelAndView signatureLog() {
+        ModelAndView modelAndView = new ModelAndView("signatureLog");
+
+        modelAndView.addObject("chainList", blockchainService.allChains());
+        modelAndView.addObject("signTypeList", Arrays.asList(SignType.values()));
+        return modelAndView;
     }
 
     @PostMapping("/search")

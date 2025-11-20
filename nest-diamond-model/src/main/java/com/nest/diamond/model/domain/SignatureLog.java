@@ -17,14 +17,21 @@ public class SignatureLog {
     private Long id;
 
     /** 签名地址（钱包地址） */
-    private String address;
+    private String signAddress;
 
     /** 业务订单号（你的业务唯一标识） */
     private String bizOrderNo;
 
     /** 空投执行ID（关联工单） */
     private Long airdropOperationId;
-    private Long airdropOperationName;
+    private String airdropOperationName;
+    /** 链ID */
+    private Long chainId;
+
+    /** 链名称 */
+    private String chainName;
+
+    private String tx;
 
     /** 原始数据（JSON 或 hex） */
     private String rawData;
@@ -34,21 +41,14 @@ public class SignatureLog {
 
     /** 签名时间 */
     private Date signTime;
+    /** 签名类型 */
+    private SignType signType;
 
     /** 合约实例快照ID（关联快照表） */
     private Long contractInstanceSnapshotId;
 
-    /** 合约地址 */
-    private String contractAddress;
-
-    /** 链ID */
-    private Long chainId;
-
-    /** 链名称 */
-    private String chainName;
-
-    /** 签名类型 */
-    private SignType signType;
+    /** 合约名称 */
+    private String contractName;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

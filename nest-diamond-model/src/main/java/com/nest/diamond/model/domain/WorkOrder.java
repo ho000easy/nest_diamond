@@ -5,6 +5,7 @@ import com.nest.diamond.common.enums.WorkOrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 @Getter
@@ -54,6 +55,10 @@ public class WorkOrder {
 
     /** 申请时间（新增） */
     private Date applyTime;
+
+    private BigInteger maxFee;
+    private Boolean isAllowTransfer;
+    private Boolean isAllowDeployContract;
 
     private String remark;
 

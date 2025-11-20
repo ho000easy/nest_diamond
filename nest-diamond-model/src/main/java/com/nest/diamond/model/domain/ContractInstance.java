@@ -21,8 +21,8 @@ public class ContractInstance {
     private String contractName;
 
     private Long chainId;
-
     private String chainName;
+
     private Long protocolId;
     private String protocolName;
 

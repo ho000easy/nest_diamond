@@ -22,6 +22,14 @@ public class ContractInstanceService {
     @Autowired
     private BlockchainService blockchainService;
 
+    public List<ContractInstance> search(ContractInstanceQuery contractInstanceQuery){
+        return contractInstanceIService.search(contractInstanceQuery);
+    }
+
+    public List<ContractInstance> findAll(){
+        ContractInstanceQuery contractInstanceQuery = new ContractInstanceQuery();
+        return search(contractInstanceQuery);
+    }
 
     public List<ContractInstance> findByContractId(Long contractId){
         return contractInstanceIService.findBy(contractId);
@@ -81,8 +89,5 @@ public class ContractInstanceService {
         contractInstanceIService.removeBatchByIds(ids);
     }
 
-    public List<ContractInstance> search(ContractInstanceQuery contractInstanceQuery){
-        return contractInstanceIService.search(contractInstanceQuery);
-    }
 
 }

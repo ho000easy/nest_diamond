@@ -23,6 +23,10 @@ public class ContractInstanceSnapshotService {
         return contractInstanceSnapshotIService.search(query);
     }
 
+    public ContractInstanceSnapshot findByChainIdAndContractAddress(String workOrderNo, Long chainId, String contractAddress){
+        return contractInstanceSnapshotIService.findByChainIdAndContractAddress(workOrderNo, chainId, contractAddress);
+    }
+
     public void create(String workOrderNo, List<Long> contractInstanceIdList){
         List<ContractInstance> contractInstanceList = contractInstanceService.findByIds(contractInstanceIdList);
         List<ContractInstanceSnapshot> contractInstanceSnapshotList = contractInstanceList.stream().map(contractInstance -> {

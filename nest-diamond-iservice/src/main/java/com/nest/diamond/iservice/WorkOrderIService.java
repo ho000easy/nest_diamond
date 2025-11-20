@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface WorkOrderIService extends IService<WorkOrder> {
     List<WorkOrder> search(WorkOrderQuery query);
+
+    List<WorkOrder> findByAirdropOperationId(Long airdropOperationId);
 }

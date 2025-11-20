@@ -28,7 +28,6 @@ public class BlockChain {
     private Boolean isTestnet;
     @TableField(updateStrategy = FieldStrategy.IGNORED)
     private RpcVendor rpcVendor;
-//    private IpProxyVendor ipProxyVendor;
     private VMType vmType;
 
     @TableField(fill = FieldFill.INSERT)

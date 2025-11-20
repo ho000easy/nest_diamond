@@ -14,6 +14,9 @@ public class CreateWorkOrderRequest {
     @NotBlank(message = "工单名称不能为空")
     private String name;
 
+    @NotBlank(message = "工单号不能为空")
+    private String workOrderNo;
+
     @NotNull(message = "空投操作ID不能为空")
     private Long airdropOperationId;
 
@@ -36,6 +39,11 @@ public class CreateWorkOrderRequest {
 
     @NotEmpty(message = "至少选择一个合约实例")
     private List<ContractInstanceRef> contractInstanceRefs;
+
+    @NotNull(message = "是否允许转账不能为空")
+    private Boolean isAllowTransfer;
+    @NotNull(message = "是否允许部署合约不能为空")
+    private Boolean isAllowDeployContract;
 
     private String remark;
 

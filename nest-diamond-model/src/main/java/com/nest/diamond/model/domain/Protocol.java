@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Getter
@@ -23,11 +22,6 @@ public class Protocol {
     private String discord;
     private String twitter;
     private ProtocolVendor protocolType;
-
-    @TableField(updateStrategy = FieldStrategy.IGNORED)
-    private BigDecimal gasPriceFactor;
-    @TableField(updateStrategy = FieldStrategy.IGNORED)
-    private BigDecimal gasLimitFactor;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
