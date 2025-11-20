@@ -2,9 +2,9 @@ package com.nest.diamond.model.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.nest.diamond.common.enums.ProtocolVendor;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.NotBlank;
 
 import java.math.BigDecimal;
 import java.util.Date;

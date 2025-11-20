@@ -63,17 +63,12 @@
 
 
     <!-- 业务日志 -->
-    <logger name="com.nest.ib" level="${LEVEL}" additivity="false">
+    <logger name="com.nest.diamond" level="${LEVEL}" additivity="false">
         <appender-ref ref="SERVICE"/>
         <appender-ref ref="ERROR"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <logger name="com.binance" level="${LEVEL}" additivity="false">
-        <appender-ref ref="SERVICE"/>
-        <appender-ref ref="ERROR"/>
-<!--        <appender-ref ref="CONSOLE"/>-->
-    </logger>
     <!-- 默认日志 -->
     <root level="${LEVEL}">
         <appender-ref ref="ERROR"/>

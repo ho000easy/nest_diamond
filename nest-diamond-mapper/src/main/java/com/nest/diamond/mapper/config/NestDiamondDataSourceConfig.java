@@ -1,4 +1,4 @@
-package com.nest.diamond.config;
+package com.nest.diamond.mapper.config;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

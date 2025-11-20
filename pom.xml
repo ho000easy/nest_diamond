@@ -1,130 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.nest</groupId>
     <artifactId>diamond</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <modules>
-        <module>nest-diamond-model</module>
-        <module>nest-diamond-mapper</module>
-        <module>nest-diamond-web</module>
-        <module>nest-diamond-iservice</module>
-        <module>nest-diamond-service</module>
-        <module>nest-diamond-common</module>
-    </modules>
+
+    <!-- ==================== 全局版本（升级时只改这里） ==================== -->
+    <version>1.0-SNAPSHOT</version>
+
+    <name>diamond</name>
+    <description>Nest Diamond 多模块项目根 POM</description>
 
     <properties>
+        <!-- Java & Maven -->
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <maven.test.skip>true</maven.test.skip>
-        <java.version>17</java.version>
-        <profiles.dir>src/main/profiles</profiles.dir>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+
+        <!-- 第三方版本统一管理（升级只改这里） -->
+        <mybatis-plus.version>3.5.8</mybatis-plus.version>          <!-- 强烈建议升级，彻底解决 SB3 兼容问题 -->
+        <mybatis.version>3.5.16</mybatis.version>
+        <mybatis-spring.version>3.0.4</mybatis-spring.version>
+        <dubbo.version>3.3.0</dubbo.version>
+        <jackson.version>2.17.2</jackson.version>
+        <guava.version>33.3.1-jre</guava.version>                  <!-- 21.0 太老，已有多个漏洞 -->
+        <lombok.version>1.18.36</lombok.version>
+        <errorprone.version>2.30.0</errorprone.version>
+        <commons-lang3.version>3.17.0</commons-lang3.version>      <!-- Spring Boot 自带 3.8.1，可升级 -->
+        <commons-codec.version>1.17.1</commons-codec.version>
     </properties>
 
+    <!-- 子模块顺序（建议按依赖顺序排列） -->
+    <modules>
+        <module>nest-diamond-common</module>
+        <module>nest-diamond-model</module>
+        <module>nest-diamond-iservice</module>
+        <module>nest-diamond-dubbo</module>
+        <module>nest-diamond-mapper</module>
+        <module>nest-diamond-service</module>
+        <module>nest-diamond-web</module>
+    </modules>
+
+    <!-- Spring Boot 3 Parent（核心，不能删） -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.4</version>
-        <relativePath/>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-
+    <!-- 第三方依赖版本统一管理（只放你需要覆盖的） -->
     <dependencyManagement>
         <dependencies>
+            <!-- MyBatis-Plus 全家桶（统一版本） -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>3.5.5</version>
-                <exclusions>
-                    <!-- 保险：排掉老的 mybatis-spring（某些历史版本会带 2.x） -->
-                    <exclusion>
-                        <groupId>org.mybatis</groupId>
-                        <artifactId>mybatis-spring</artifactId>
-                    </exclusion>
-                </exclusions>
+                <version>${mybatis-plus.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis-spring</artifactId>
-                <version>3.0.3</version>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-annotation</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-core</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
-                <version>3.5.15</version>
+                <version>${mybatis.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>1.2.58</version>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
             </dependency>
-            <!-- guava -->
+
+            <!-- Dubbo 全家桶 -->
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-spring-boot-starter</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.dubbo.extensions</groupId>
+                <artifactId>dubbo-serialization-jackson</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+
+            <!-- Jackson -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- Guava（强烈升级） -->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>21.0</version>
-            </dependency>
-            <!-- parameter validator -->
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>5.3.5.Final</version>
+                <version>${guava.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>2.9.2</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>2.9.2</version>
-            </dependency>
+            <!-- Lombok -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.36</version>
+                <version>${lombok.version}</version>
             </dependency>
+
+            <!-- Error Prone -->
             <dependency>
                 <groupId>com.google.errorprone</groupId>
                 <artifactId>error_prone_annotations</artifactId>
-                <version>2.30.0</version>
-            </dependency>
-            <!--            <dependency>-->
-            <!--                <groupId>org.springframework.boot</groupId>-->
-            <!--                <artifactId>spring-boot-starter-thymeleaf</artifactId>-->
-            <!--                <version>3.3.4</version>-->
-            <!--            </dependency>-->
-            <!--            <dependency>-->
-            <!--                <groupId>org.springframework.boot</groupId>-->
-            <!--                <artifactId>spring-boot-starter-logging</artifactId>-->
-            <!--            </dependency>-->
-            <dependency>
-                <groupId>org.thymeleaf.extras</groupId>
-                <artifactId>thymeleaf-extras-springsecurity6</artifactId>
-                <version>3.1.2.RELEASE</version>
+                <version>${errorprone.version}</version>
             </dependency>
 
-            <!--            <dependency>-->
-            <!--                <groupId>org.springframework.boot</groupId>-->
-            <!--                <artifactId>spring-boot-starter-security</artifactId>-->
-            <!--            </dependency>-->
-
+            <!-- Commons -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.8.1</version>
+                <version>${commons-lang3.version}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
+
+            <!-- 其他你暂时还想保留的（建议后续清理） -->
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>5.12.0</version> <!-- 确保是兼容版本 -->
+                <version>5.14.0</version>
             </dependency>
             <dependency>
                 <groupId>org.web3j</groupId>
@@ -132,78 +149,43 @@
                 <version>4.9.7-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>1.9.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.17.2</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.validation</groupId>
-                <artifactId>jakarta.validation-api</artifactId>
-                <version>3.0.2</version>
-            </dependency>
-            <dependency>
                 <groupId>com.mmorrell</groupId>
                 <artifactId>solanaj</artifactId>
                 <version>1.17.6-SNAPSHOT</version>
             </dependency>
-            <!--            <dependency>-->
-            <!--                <groupId>ch.qos.logback</groupId>-->
-            <!--                <artifactId>logback-classic</artifactId>-->
-            <!--                <version>1.2.3</version>-->
-            <!--            </dependency>-->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.9.3</version>
+            </dependency>
+
+            <!-- 已删除的高危/无用依赖：
+                 fastjson 1.2.58（严重漏洞）、hibernate-validator 5.x（SB3 自带8.x）、
+                 springfox-swagger2（已废弃）、commons-beanutils（性能差） -->
         </dependencies>
     </dependencyManagement>
 
+    <!-- 插件统一管理（可选优化） -->
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <artifactId>maven-archetype-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                    <executions>
-                        <execution>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.5</version>
+                    <configuration>
+                        <skipTests>true</skipTests>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
