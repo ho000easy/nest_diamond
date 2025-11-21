@@ -1,12 +1,13 @@
-// 1. 新 DTO 类（放 model/domain 包下）
 package com.nest.diamond.dubbo.dto.work_order;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
-public class ContractInstanceRef {
+public class ContractInstanceRef implements Serializable {
     private Long chainId;
     private String chainName;
 
@@ -14,7 +15,4 @@ public class ContractInstanceRef {
     private String contractName;
 
     private String address;
-
-
-
 }

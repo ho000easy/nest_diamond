@@ -1,10 +1,11 @@
 // src/main/java/com/nest/diamond/dubbo/dto/CreateWorkOrderResponse.java
 package com.nest.diamond.dubbo.dto.work_order;
 
+import com.nest.diamond.dubbo.dto.BaseDTO;
 import lombok.Data;
 
 @Data
-public class CreateWorkOrderResponse {
+public class CreateWorkOrderResponse extends BaseDTO {
     private String workOrderNo;      // 生成的工单编号
     private Long workOrderId;        // 工单ID
 

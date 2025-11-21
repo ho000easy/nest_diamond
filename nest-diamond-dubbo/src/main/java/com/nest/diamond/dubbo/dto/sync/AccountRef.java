@@ -2,8 +2,10 @@ package com.nest.diamond.dubbo.dto.sync;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class AccountRef {
+public class AccountRef implements Serializable {
 
     private String type;
     private String address;
