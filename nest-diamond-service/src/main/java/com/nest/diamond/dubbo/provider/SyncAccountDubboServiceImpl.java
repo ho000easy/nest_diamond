@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.nest.diamond.common.enums.AccountType;
 import com.nest.diamond.common.enums.WalletVendor;
 import com.nest.diamond.dubbo.api.SyncAccountDubboService;
+import com.nest.diamond.dubbo.dto.RpcResult;
 import com.nest.diamond.dubbo.dto.sync.AccountRef;
 import com.nest.diamond.dubbo.dto.sync.SyncAccountRequest;
 import com.nest.diamond.model.domain.Account;
@@ -29,7 +30,7 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
 
     @Transactional
     @Override
-    public void syncAccount(SyncAccountRequest syncAccountRequest) {
+    public RpcResult<Void> syncAccount(SyncAccountRequest syncAccountRequest) {
         List<AccountRef> accountRefList = syncAccountRequest.getAccounts();
         List<String> toBeSyncedAccountAddress = accountRefList.stream().map(AccountRef::getAddress).toList();
         List<Account> accountList = accountService.findByAddresses(toBeSyncedAccountAddress);
@@ -38,7 +39,7 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
             return !accountMap.containsKey(accountRef.getAddress());
         }).toList();
 
-        List<String> seedPrefixList = filteredAccountRefList.stream().map(AccountRef::getSeed).distinct().toList();
+        List<String> seedPrefixList = filteredAccountRefList.stream().map(AccountRef::getSeedPrefix).distinct().toList();
         seedPrefixList.forEach(seedPrefix -> {
             Seed seed = seedService.findBySeedPrefix(seedPrefix);
             if(seed == null){
@@ -60,5 +61,6 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
             return account;
         }).toList();
         accountService.batchInsert(toBeInsertedAccountList);
+        return RpcResult.success();
     }
 }

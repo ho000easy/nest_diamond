@@ -4,6 +4,7 @@ import com.nest.diamond.common.enums.SignType;
 import com.nest.diamond.common.util.JsonUtils;
 import com.nest.diamond.common.util.SignUtil;
 import com.nest.diamond.dubbo.api.EthSignDubboService;
+import com.nest.diamond.dubbo.dto.RpcResult;
 import com.nest.diamond.dubbo.dto.sign.*;
 import com.nest.diamond.model.domain.*;
 import com.nest.diamond.service.*;
@@ -36,7 +37,7 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
 
     @Transactional
     @Override
-    public SignRawTransactionResponse signRawTransaction(SignRawTransactionRequest signRawTransactionRequest) {
+    public RpcResult<SignRawTransactionResponse> signRawTransaction(SignRawTransactionRequest signRawTransactionRequest) {
         RawTransaction rawTransaction = signRawTransactionRequest.getRawTransaction();
         WorkOrder workOrder = workOrderService.validateWorkOrderAndAccount(signRawTransactionRequest.getAirdropOperationId(), signRawTransactionRequest.getSignAddress());
         workOrderService.validateRawTransaction(workOrder, rawTransaction, signRawTransactionRequest.getChainId());
@@ -46,12 +47,12 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         SignRawTransactionResponse signRawTransactionResponse = new SignRawTransactionResponse();
         signRawTransactionResponse.setSignedRawTransaction(signatureLog.getSignedData());
         signRawTransactionResponse.setTxHash(signatureLog.getTx());
-        return signRawTransactionResponse;
+        return RpcResult.success(signRawTransactionResponse);
     }
 
 
     @Override
-    public SignEip712MessageResponse signEip712Message(SignEip712MessageRequest signEip712MessageRequest) {
+    public RpcResult<SignEip712MessageResponse> signEip712Message(SignEip712MessageRequest signEip712MessageRequest) {
         WorkOrder workOrder = workOrderService.validateWorkOrderAndAccount(signEip712MessageRequest.getAirdropOperationId(), signEip712MessageRequest.getSignAddress());
         workOrderService.validateEip712Message(signEip712MessageRequest.getMessageHex());
 
@@ -60,17 +61,17 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         SignEip712MessageResponse signEip712MessageResponse = new SignEip712MessageResponse();
         signEip712MessageResponse.setSignature(signatureLog.getSignedData());
 
-        return signEip712MessageResponse;
+        return RpcResult.success(signEip712MessageResponse);
     }
 
     @Override
-    public SignPrefixedMessageResponse signPrefixedMessage(SignPrefixedMessageRequest signPrefixedMessageRequest) {
+    public RpcResult<SignPrefixedMessageResponse> signPrefixedMessage(SignPrefixedMessageRequest signPrefixedMessageRequest) {
         WorkOrder workOrder = workOrderService.validateWorkOrderAndAccount(signPrefixedMessageRequest.getAirdropOperationId(), signPrefixedMessageRequest.getSignAddress());
         SignatureLog signatureLog = buildAndSaveSignatureLogFromPrefixedMessage(signPrefixedMessageRequest, workOrder);
 
         SignPrefixedMessageResponse signPrefixedMessageResponse = new SignPrefixedMessageResponse();
         signPrefixedMessageResponse.setSignature(signatureLog.getSignedData());
-        return signPrefixedMessageResponse;
+        return RpcResult.success(signPrefixedMessageResponse);
     }
 
     private SignatureLog buildAndSaveSignatureLogFromEip712Message(SignEip712MessageRequest signEip712MessageRequest, WorkOrder workOrder) {

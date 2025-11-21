@@ -2,6 +2,7 @@ package com.nest.diamond.dubbo.provider;
 
 import com.nest.diamond.common.util.NumUtils;
 import com.nest.diamond.dubbo.api.WorkOrderDubboService;
+import com.nest.diamond.dubbo.dto.RpcResult;
 import com.nest.diamond.dubbo.dto.work_order.ContractInstanceRef;
 import com.nest.diamond.dubbo.dto.work_order.CreateWorkOrderRequest;
 import com.nest.diamond.dubbo.dto.work_order.CreateWorkOrderResponse;
@@ -37,7 +38,7 @@ public class WorkOrderDubboServiceImpl implements WorkOrderDubboService {
 
     @Transactional
     @Override
-    public CreateWorkOrderResponse createWorkOrder(CreateWorkOrderRequest request) {
+    public RpcResult<CreateWorkOrderResponse> createWorkOrder(CreateWorkOrderRequest request) {
         Assert.isTrue(request.getStartTime().before(request.getEndTime()), "工单开始时间必须小于结束时间");
 
         List<Account> accountList = accountService.findByAddresses(request.getAddressList());
@@ -56,7 +57,7 @@ public class WorkOrderDubboServiceImpl implements WorkOrderDubboService {
         workOrder.setApplyTime(new Date());
 
         workOrderService.insert(workOrder);
-        return CreateWorkOrderResponse.create(request.getWorkOrderNo(), workOrder.getId());
+        return RpcResult.success(CreateWorkOrderResponse.create(request.getWorkOrderNo(), workOrder.getId()));
     }
 
     private void buildAndSaveContractInstanceSnapshot(CreateWorkOrderRequest request) {

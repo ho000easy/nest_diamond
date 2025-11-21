@@ -1,12 +1,13 @@
 package com.nest.diamond.dubbo.api;
 
+import com.nest.diamond.dubbo.dto.RpcResult;
 import com.nest.diamond.dubbo.dto.sign.*;
 import jakarta.validation.Valid;
 
 public interface EthSignDubboService {
-    SignRawTransactionResponse signRawTransaction(@Valid SignRawTransactionRequest signRawTransactionRequest);
+    RpcResult<SignRawTransactionResponse> signRawTransaction(@Valid SignRawTransactionRequest signRawTransactionRequest);
 
-    SignEip712MessageResponse signEip712Message(@Valid SignEip712MessageRequest signEip712MessageRequest);
+    RpcResult<SignEip712MessageResponse> signEip712Message(@Valid SignEip712MessageRequest signEip712MessageRequest);
 
-    SignPrefixedMessageResponse signPrefixedMessage(@Valid SignPrefixedMessageRequest signPrefixedMessageRequest);
+    RpcResult<SignPrefixedMessageResponse> signPrefixedMessage(@Valid SignPrefixedMessageRequest signPrefixedMessageRequest);
 }

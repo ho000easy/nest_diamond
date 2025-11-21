@@ -1,0 +1,7 @@
+jakarta.validation.ConstraintViolationException
+org.hibernate.validator.internal.engine.ConstraintViolationImpl
+org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl
+org.hibernate.validator.internal.util.annotation.ConstraintAnnotationDescriptor
+org.apache.dubbo.rpc.RpcException
+java.lang.RuntimeException
+java.lang.IllegalArgumentException
