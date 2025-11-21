@@ -5,24 +5,22 @@
     <select id="search" resultType="com.nest.diamond.model.domain.ContractInstanceSnapshot">
         SELECT * FROM contract_instance_snapshot
         <where>
-            <if test="contractInstanceId != null">
-                AND contract_instance_id = #{contractInstanceId}
-            </if>
             <if test="workOrderNo != null and workOrderNo != ''">
-                AND work_order_no = #{workOrderNo}
+                and work_order_no = #{workOrderNo}
             </if>
-            <if test="version != null">
-                AND version = #{version}
+            <if test="protocolName != null and protocolName != ''">
+                and protocol_name = #{protocolName}
             </if>
-            <if test="protocolId != null">
-                AND protocol_id = #{protocolId}
+            <if test="contractName != null and contractName != ''">
+                and contract_name = #{contractName}
             </if>
-            <if test="contractId != null">
-                AND contract_id = #{contractId}
+            <if test="chainName != null and chainName != ''">
+                and chain_name = #{chainName}
             </if>
-            <if test="chainId != null">
-                AND chain_id = #{chainId}
+            <if test="address != null and address != ''">
+                and address like concat('%', #{address}, '%')
             </if>
+
         </where>
         ORDER BY version DESC, create_time DESC
     </select>

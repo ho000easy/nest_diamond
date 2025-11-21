@@ -84,7 +84,7 @@ $(document).ready(function () {
 
     function protocolChange(){
         let protocolId = $("#protocolId").val()
-        postForm('/contract/findByProtocol', {protocolId: protocolId}, function(resp){
+        postForm('/contract/findByProtocolId', {protocolId: protocolId}, function(resp){
             if(resp.isSuccess){
                 selectWithNullChange($('#contractId'), resp.data, 'name', 'id')
                 let initContractId = $("#initContractId").val()

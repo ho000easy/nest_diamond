@@ -4,6 +4,7 @@ package com.nest.diamond.service;
 import com.nest.diamond.common.enums.WorkOrderStatus;
 import com.nest.diamond.iservice.WorkOrderIService;
 import com.nest.diamond.model.domain.Account;
+import com.nest.diamond.model.domain.AirdropItem;
 import com.nest.diamond.model.domain.ContractInstanceSnapshot;
 import com.nest.diamond.model.domain.WorkOrder;
 import com.nest.diamond.model.domain.query.WorkOrderQuery;
@@ -16,6 +17,7 @@ import org.web3j.crypto.RawTransaction;
 import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,6 +29,8 @@ public class WorkOrderService {
     private AccountService accountService;
     @Autowired
     private ContractInstanceSnapshotService contractInstanceSnapshotService;
+    @Autowired
+    private AirdropItemService airdropItemService;
 
     public List<WorkOrder> search(WorkOrderQuery query) {
         return workOrderIService.search(query);
@@ -65,6 +69,9 @@ public class WorkOrderService {
 
         WorkOrder workOrder = workOrders.get(0);
 
+        AirdropItem airdropItem = airdropItemService.findByAirdropIdAndAddress(workOrder.getAirdropId(), signerAddress);
+        Assert.notNull(airdropItem, "空投项目下没有此地址对应的条目");
+
         // 3. 工单状态校验
         if (workOrder.getStatus() == WorkOrderStatus.PENDING) {
             throw new RuntimeException("工单还在审批中");
@@ -72,7 +79,13 @@ public class WorkOrderService {
         if (workOrder.getStatus() == WorkOrderStatus.REJECTED) {
             throw new RuntimeException("工单已被拒绝");
         }
-
+        Date currentDate = new Date();
+        if(currentDate.before(workOrder.getStartTime())){
+            throw new RuntimeException("工单还未到开启时间");
+        }
+        if(currentDate.after(workOrder.getEndTime())){
+            throw new RuntimeException("工单已经截至时间");
+        }
         return workOrder;
     }
 

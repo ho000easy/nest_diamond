@@ -4,10 +4,8 @@ import lombok.Data;
 
 @Data
 public class ContractInstanceSnapshotQuery {
-    private Long contractInstanceId;
     private String workOrderNo;
-    private Integer version;
-    private Long protocolId;
-    private Long contractId;
-    private Long chainId;
+    private Long protocolName;
+    private Long chainName;
+    private Long contractName;
 }

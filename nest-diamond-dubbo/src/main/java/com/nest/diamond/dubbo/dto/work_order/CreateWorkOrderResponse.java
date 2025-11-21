@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class CreateWorkOrderResponse {
-    private String workOrderNo;      // 生成的工单号
+    private String workOrderNo;      // 生成的工单编号
     private Long workOrderId;        // 工单ID
 
     public static CreateWorkOrderResponse create(String workOrderNo, Long id) {

@@ -15,19 +15,13 @@ public class ContractInstanceSnapshot {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private Long contractInstanceId;     // 关联的 contract_instance.id
-    private String workOrderNo;          // 工单号（业务唯一标识）
-    private Integer version;             // 版本号（从 1 开始）
-
-    private String address;
-    private Long contractId;
-    private String contractName;
+    private String workOrderNo;          // 工单编号（业务唯一标识）
     private Long chainId;
     private String chainName;
-    private Long protocolId;
     private String protocolName;
+    private String contractName;
 
-    private Boolean isMonitor;
+    private String address;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

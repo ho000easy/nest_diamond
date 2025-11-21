@@ -8,5 +8,13 @@ import lombok.Data;
 @AllArgsConstructor
 public class ContractInstanceRef {
     private Long chainId;
-    private String contractAddress;
+    private String chainName;
+
+    private String protocolName;
+    private String contractName;
+
+    private String address;
+
+
+
 }

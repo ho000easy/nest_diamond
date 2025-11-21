@@ -22,6 +22,13 @@ public class ContractIServiceImpl extends ServiceImpl<ContractMapper, Contract> 
     }
 
     @Override
+    public List<Contract> findByProtocolName(String protocolName) {
+        LambdaQueryWrapper<Contract> queryWrapper = new QueryWrapper<Contract>().lambda();
+        queryWrapper.eq(Contract::getProtocolName, protocolName);
+        return super.list(queryWrapper);
+    }
+
+    @Override
     public List<Contract> search(ContractQuery contractQuery) {
         return baseMapper.search(contractQuery);
     }

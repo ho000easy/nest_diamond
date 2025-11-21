@@ -1,23 +1,7 @@
 // static/js/nest/workOrder.js
 $(document).ready(function () {
     let columnDefs = [
-        {
-            targets: 4,
-            className: 'seq-col', // 让这一列可以换行
-            render: function (data, type, full, meta) {
-                const raw = full.sequences
-                    ? String(full.sequences)
-                    : `${full.startSequence}-${full.endSequence}`;
 
-                // 排序/搜索使用原始值
-                if (type !== 'display') return raw;
-
-                // 没有长串就直接返回
-                if (!full.sequences) return raw;
-
-                return renderSequenceList(raw);
-            }
-        },
         {
             targets: 5,
             className: 'seq-col', // 让这一列可以换行
@@ -30,7 +14,7 @@ $(document).ready(function () {
             }
         },
         {
-            targets: 7,  // 状态列索引
+            targets: 8,  // 状态列索引
             className: 'text-center',
             render: function (data, type, row) {
                 let badge = '';
@@ -52,8 +36,8 @@ $(document).ready(function () {
         }
     ]
     let table = multiSelectDataTable('workOrderTable', '/workOrder/search',
-        ['id', 'workOrderNo', 'name', 'airdropOperationName', 'airdropName', null,
-            null, 'contractInstanceSnapshotIds', 'status', 'applicant', 'applyTime', 'createTime', 'modifyTime'],
+        ['id', 'workOrderNo', 'name', 'airdropOperationName', 'airdropName',
+            null, 'isAllowTransfer', 'isAllowDeployContract', 'status', 'applicant', 'applyTime', 'createTime', 'modifyTime'],
         params, null, columnDefs);
 
     function params() {

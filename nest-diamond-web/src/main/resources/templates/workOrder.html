@@ -17,8 +17,15 @@
             </div>
             <div class="col-3 mt-4">
                 <div class="input-group">
-                    <span class="input-group-text">工单号</span>
-                    <input name="workOrderNo" class="form-control" placeholder="工单号"
+                    <span class="input-group-text">工单编号</span>
+                    <input name="workOrderNo" class="form-control" placeholder="工单编号"
+                           aria-describedby="basic-addon1" value="">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">空投操作</span>
+                    <input name="airdropOperationName" class="form-control" placeholder="空投操作"
                            aria-describedby="basic-addon1" value="">
                 </div>
             </div>
@@ -53,13 +60,13 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" name="select_all" value="1" class="example-select-all"></th>
-                    <th>工单号</th>
+                    <th>工单编号</th>
                     <th>工单名称</th>
                     <th>空投操作</th>
                     <th>空投项目</th>
-                    <th>序列号</th>
                     <th>生效时间</th>
-                    <th>合约实例快照</th>
+                    <th>是否允许转账</th>
+                    <th>是否允许部署合约</th>
                     <th>状态</th>
                     <th>申请人</th>
                     <th>申请时间</th>

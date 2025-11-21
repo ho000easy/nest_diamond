@@ -8,21 +8,16 @@
             <if test="name != null and name != ''">
                 AND name LIKE CONCAT('%', #{name}, '%')
             </if>
+            <if test="airdropOperationName != null and airdropOperationName != ''">
+                AND airdrop_operation_name LIKE CONCAT('%', #{airdropOperationName}, '%')
+            </if>
             <if test="workOrderNo != null and workOrderNo != ''">
                 AND work_order_no = #{workOrderNo}
-            </if>
-            <if test="airdropId != null">
-                AND airdrop_id = #{airdropId}
             </if>
             <if test="status != null">
                 AND status = #{status}
             </if>
-            <if test="createTimeBegin != null">
-                AND create_time >= #{createTimeBegin}
-            </if>
-            <if test="createTimeEnd != null">
-                AND create_time &lt;= #{createTimeEnd}
-            </if>
+
         </where>
         ORDER BY create_time DESC
     </select>

@@ -19,6 +19,7 @@ public class SignatureLog {
     /** 签名地址（钱包地址） */
     private String signAddress;
 
+    private String workOrderNo;
     /** 业务订单号（你的业务唯一标识） */
     private String bizOrderNo;
 

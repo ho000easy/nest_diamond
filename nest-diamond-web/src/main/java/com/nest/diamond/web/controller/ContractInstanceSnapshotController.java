@@ -22,14 +22,14 @@ public class ContractInstanceSnapshotController {
     private BlockchainService blockchainService;
 
     @RequestMapping("/contractInstanceSnapshot")
-    public ModelAndView contractInstanceSnapshot(String workOrderNo, Long protocolId, Long contractId, String contractAddress) {
-        ModelAndView modelAndView = new ModelAndView("contractInstance");
+    public ModelAndView contractInstanceSnapshot(String workOrderNo, Long protocolName, Long contractName, String contractAddress) {
+        ModelAndView modelAndView = new ModelAndView("contractInstanceSnapshot");
         modelAndView.addObject("protocols", protocolService.allProtocols());
         modelAndView.addObject("blockChainList", blockchainService.allChains());
         modelAndView.addObject("workOrderNo", workOrderNo);
         modelAndView.addObject("contractAddress", contractAddress);
-        modelAndView.addObject("protocolId", protocolId);
-        modelAndView.addObject("contractId", contractId);
+        modelAndView.addObject("protocolId", protocolName);
+        modelAndView.addObject("contractId", contractName);
 
         return modelAndView;
     }

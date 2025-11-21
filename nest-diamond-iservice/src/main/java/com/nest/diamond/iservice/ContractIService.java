@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ContractIService extends IService<Contract> {
     List<Contract> findBy(Long protocolId);
-
+    List<Contract> findByProtocolName(String protocolName);
     List<Contract> search(ContractQuery contractQuery);
 }

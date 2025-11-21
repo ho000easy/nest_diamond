@@ -34,12 +34,6 @@ public class WorkOrderController {
         return DataTableVO.create(workOrderService.search(query));
     }
 
-    @PostMapping("/create")
-    @ResponseBody
-    public ApiResult create(@RequestBody WorkOrder workOrder) {
-        workOrderService.insert(workOrder);
-        return ApiResult.success("工单创建成功");
-    }
 
     @PostMapping("/approve")
     @ResponseBody

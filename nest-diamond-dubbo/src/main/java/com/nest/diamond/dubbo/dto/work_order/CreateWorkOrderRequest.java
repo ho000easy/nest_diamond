@@ -14,7 +14,7 @@ public class CreateWorkOrderRequest {
     @NotBlank(message = "工单名称不能为空")
     private String name;
 
-    @NotBlank(message = "工单号不能为空")
+    @NotBlank(message = "工单编号不能为空")
     private String workOrderNo;
 
     @NotNull(message = "空投操作ID不能为空")
@@ -23,14 +23,11 @@ public class CreateWorkOrderRequest {
     @NotBlank(message = "空投操作名称不能为空")
     private String airdropOperationName;
 
-    @NotNull(message = "空投项目ID不能为空")
-    private Long airdropId;
+    @NotEmpty(message = "空投项目名称不能为空")
+    private String airdropName;
 
-    @NotNull(message = "起始序列不能为空")
-    private Integer startSequence;
-
-    @NotNull(message = "结束序列不能为空")
-    private Integer endSequence;
+    @NotEmpty(message = "空投项目地址不能为空")
+    private List<String> addressList;
 
     @NotNull(message = "开始时间不能为空")
     private Date startTime;

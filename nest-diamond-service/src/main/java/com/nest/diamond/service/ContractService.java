@@ -30,6 +30,10 @@ public class ContractService {
         return contractIService.findBy(protocolId);
     }
 
+    public List<Contract> findByProtocolName(String protocolName) {
+        return contractIService.findByProtocolName(protocolName);
+    }
+
     public void create(Contract contract) {
         Protocol protocol = protocolService.findById(contract.getProtocolId());
         contract.setProtocolName(protocol.getName());

@@ -11,8 +11,8 @@
         <div class="row">
             <div class="col-3 mt-4">
                 <div class="input-group">
-                    <span class="input-group-text">工单号</span>
-                    <input name="workOrderNo" class="form-control" placeholder="工单号"
+                    <span class="input-group-text">工单编号</span>
+                    <input name="workOrderNo" class="form-control" placeholder="工单编号"
                            aria-describedby="basic-addon1" th:value="${workOrderNo}">
                 </div>
             </div>
@@ -25,8 +25,8 @@
                         <th:block th:each="protocol: ${protocols}">
                             <option th:data-tokens="${protocol.name}"
                                     th:text="${protocol.name}"
-                                    th:value="${protocol.id}"
-                                    th:selected="${protocol.id}==${protocolId}"></option>
+                                    th:value="${protocol.name}"
+                                    th:selected="${protocol.name}==${protocolName}"></option>
                         </th:block>
 
                     </select>
@@ -35,8 +35,7 @@
             <div class="col-3 mt-4">
                 <div class="input-group">
                     <span class="input-group-text">合约名称</span>
-                    <input id="initContractId" type="hidden" th:value="${contractId}">
-                    <select id="contractId" name="contractId" class="selectpicker form-control" data-live-search="true">
+                    <select id="contractName" name="contractName" class="selectpicker form-control" data-live-search="true">
 
                     </select>
                 </div>
@@ -51,7 +50,7 @@
                         <th:block th:each="blockChain: ${blockChainList}">
                             <option th:data-tokens="${blockChain.chainName}"
                                     th:text="${blockChain.chainName}"
-                                    th:value="${blockChain.chainId}"></option>
+                                    th:value="${blockChain.chainName}"></option>
                         </th:block>
                     </select>
                 </div>
@@ -82,6 +81,7 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" name="select_all" value="1" class="example-select-all"></th>
+                    <th>工单编号</th>
                     <th>协议名称</th>
                     <th>合约名称</th>
                     <th>链</th>

@@ -55,6 +55,10 @@ public class SeedService {
         return seedIService.getById(id);
     }
 
+    public Seed findBySeedPrefix(String seedPrefix){
+        return seedIService.findBySeedPrefix(seedPrefix);
+    }
+
     public List<Seed> search(String prefix) {
         return seedIService.search(prefix);
     }

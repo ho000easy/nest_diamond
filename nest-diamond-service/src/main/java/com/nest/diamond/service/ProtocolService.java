@@ -36,8 +36,6 @@ public class ProtocolService {
         _protocol.setDiscord(protocol.getDiscord());
         _protocol.setGithub(protocol.getGithub());
         _protocol.setTwitter(protocol.getTwitter());
-        _protocol.setGasPriceFactor(protocol.getGasPriceFactor());
-        _protocol.setGasLimitFactor(protocol.getGasLimitFactor());
         protocolIService.updateById(_protocol);
 
         List<Contract> contractList = contractService.findByProtocolId(protocol.getId());

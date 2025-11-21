@@ -15,10 +15,10 @@
             <if test="chainId != null">
                 and chain_id = #{chainId}
             </if>
-            <if test="contractName != null and contractName != null">
+            <if test="contractName != null and contractName != ''">
                 and contract_name like concat('%', #{contractName}, '%')
             </if>
-            <if test="address != null and address != null">
+            <if test="address != null and address != ''">
                 and address like concat('%', #{address}, '%')
             </if>
             <if test="isMonitor != null">

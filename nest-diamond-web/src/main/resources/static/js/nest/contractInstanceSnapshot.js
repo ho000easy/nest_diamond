@@ -7,39 +7,14 @@ $(document).ready(function () {
             'render': function (data, type, full, meta) {
                 return editColumn(data)
             }
-        },
-        {
-            'targets': 5,
-            'className': 'dt-body-center',
-            'render': function (data, type, full, meta) {
-                if(full.minGasPriceFactor && full.maxGasPriceFactor) {
-                    return `<span style="color:#e15927;font-weight: bold;">${full.minGasPriceFactor}</span>-
-                            <span style="color:green;font-weight: bold;">${full.maxGasPriceFactor}</span>`
-                }
-                return ''
-            }
-        },{
-            'targets': 6,
-            'className': 'dt-body-center',
-            'render': function (data, type, full, meta) {
-                if(full.minGasLimitFactor && full.maxGasLimitFactor){
-                    return `<span style="color:#e15927;font-weight: bold;">${full.minGasLimitFactor}</span>-
-                            <span style="color:green;font-weight: bold;">${full.maxGasLimitFactor}</span>`
-                }
-                return ''
-            }
         }
     ]
     let contractInstanceListTable = multiSelectDataTable('contractInstanceList', '/contractInstance/search',
-        ['id', 'protocolName', 'contractName', 'chainName', 'address', 'createTime', 'modifyTime'],
+        ['id', 'workOrderNo', 'protocolName', 'contractName', 'chainName', 'address', 'createTime', 'modifyTime'],
         params, null, columnDefs)
 
     function params() {
         let data = $("#addForm").serialize()
-        let initContractId = $('#initContractId').val()
-        if(initContractId){
-            data = data + `&contractId=${initContractId}`
-        }
         return data
     }
 
@@ -83,17 +58,10 @@ $(document).ready(function () {
     $('#protocolId').change(protocolChange)
 
     function protocolChange(){
-        let protocolId = $("#protocolId").val()
-        postForm('/contract/findByProtocol', {protocolId: protocolId}, function(resp){
+        let protocolName = $("#protocolName").val()
+        postForm('/contract/findByProtocolName', {protocolName: protocolName}, function(resp){
             if(resp.isSuccess){
-                selectWithNullChange($('#contractId'), resp.data, 'name', 'id')
-                let initContractId = $("#initContractId").val()
-                if(initContractId != null){
-                    $('#contractId').val(initContractId)
-                    $('#contractId').selectpicker('refresh')
-
-                    $('#initContractId').val(null)
-                }
+                selectWithNullChange($('#contractName'), resp.data, 'name', 'name')
             }
         })
     }

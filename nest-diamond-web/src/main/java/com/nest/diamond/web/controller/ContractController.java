@@ -39,10 +39,17 @@ public class ContractController {
         return DataTableVO.create(contractService.search(contractQuery));
     }
 
-    @RequestMapping("/contract/findByProtocol")
+    @RequestMapping("/contract/findByProtocolId")
     @ResponseBody
-    public ApiResult<List<Contract>> findByProtocol(Long protocolId) {
+    public ApiResult<List<Contract>> findByProtocolId(Long protocolId, String protocolName) {
         List<Contract> contractList = contractService.findByProtocolId(protocolId);
+        return ApiResult.success(contractList);
+    }
+
+    @RequestMapping("/contract/findByProtocolName")
+    @ResponseBody
+    public ApiResult<List<Contract>> findByProtocolId(String protocolName) {
+        List<Contract> contractList = contractService.findByProtocolName(protocolName);
         return ApiResult.success(contractList);
     }
 

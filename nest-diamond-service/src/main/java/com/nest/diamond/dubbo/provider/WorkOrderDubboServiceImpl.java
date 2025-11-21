@@ -1,25 +1,27 @@
 package com.nest.diamond.dubbo.provider;
 
-import com.google.common.collect.Maps;
-import com.nest.diamond.common.util.ListUtil;
+import com.nest.diamond.common.util.NumUtils;
 import com.nest.diamond.dubbo.api.WorkOrderDubboService;
+import com.nest.diamond.dubbo.dto.work_order.ContractInstanceRef;
 import com.nest.diamond.dubbo.dto.work_order.CreateWorkOrderRequest;
 import com.nest.diamond.dubbo.dto.work_order.CreateWorkOrderResponse;
-import com.nest.diamond.model.domain.ContractInstance;
+import com.nest.diamond.model.domain.Account;
+import com.nest.diamond.model.domain.Airdrop;
+import com.nest.diamond.model.domain.ContractInstanceSnapshot;
 import com.nest.diamond.model.domain.WorkOrder;
-import com.nest.diamond.service.ContractInstanceService;
+import com.nest.diamond.service.AccountService;
+import com.nest.diamond.service.AirdropService;
 import com.nest.diamond.service.ContractInstanceSnapshotService;
 import com.nest.diamond.service.WorkOrderService;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @DubboService
@@ -27,43 +29,46 @@ public class WorkOrderDubboServiceImpl implements WorkOrderDubboService {
     @Autowired
     private WorkOrderService workOrderService;
     @Autowired
-    private ContractInstanceService contractInstanceService;
-    @Autowired
     private ContractInstanceSnapshotService contractInstanceSnapshotService;
+    @Autowired
+    private AirdropService airdropService;
+    @Autowired
+    private AccountService accountService;
 
     @Transactional
     @Override
     public CreateWorkOrderResponse createWorkOrder(CreateWorkOrderRequest request) {
-        List<Long> contractInstanceIdList = buildContractInstanceIds(request);
+        Assert.isTrue(request.getStartTime().before(request.getEndTime()), "工单开始时间必须小于结束时间");
+
+        List<Account> accountList = accountService.findByAddresses(request.getAddressList());
+        Assert.isTrue(NumUtils.xEqualsY(accountList.size(), request.getAddressList().size()),
+                String.format("工单中账户个数为 %d,签名系统账户个数为 %d,两边不一致", request.getAddressList().size(), accountList.size()));
+        String airdropName = String.format("%s【%s】【%s】", request.getAirdropOperationName(), request.getAirdropName(), request.getWorkOrderNo());
+        airdropService.createAirdrop(airdropName, request.getAddressList());
+        Airdrop airdrop = airdropService.findByName(airdropName);
+
+        buildAndSaveContractInstanceSnapshot(request);
 
         WorkOrder workOrder = new WorkOrder();
         BeanUtils.copyProperties(request, workOrder);
-        workOrder.setContractInstanceIds(ListUtil.longsToCsv(contractInstanceIdList));
+        workOrder.setAirdropId(airdrop.getId());
+        workOrder.setAirdropName(airdrop.getName());
+        workOrder.setApplyTime(new Date());
 
-        contractInstanceSnapshotService.create(request.getWorkOrderNo(), contractInstanceIdList);
         workOrderService.insert(workOrder);
         return CreateWorkOrderResponse.create(request.getWorkOrderNo(), workOrder.getId());
     }
 
-    @NotNull
-    private List<Long> buildContractInstanceIds(CreateWorkOrderRequest request) {
-        List<ContractInstance> contractInstanceList = contractInstanceService.findAll();
-        Map<String, ContractInstance> contractInstanceMap = Maps.newHashMap();
-        contractInstanceList.forEach(contractInstance -> {
-            String key = buildKey(contractInstance.getChainId(), contractInstance.getAddress());
-            contractInstanceMap.put(key, contractInstance);
-        });
-
-        return request.getContractInstanceRefs().stream().map(contractInstanceRef -> {
-            String key = buildKey(contractInstanceRef.getChainId(), contractInstanceRef.getContractAddress());
-            Assert.isTrue(contractInstanceMap.containsKey(key),
-                    String.format("链ID %d 合约地址 %s 在diamond系统不存在", contractInstanceRef.getChainId(), contractInstanceRef.getContractAddress()));
-            return contractInstanceMap.get(key).getId();
+    private void buildAndSaveContractInstanceSnapshot(CreateWorkOrderRequest request) {
+        List<ContractInstanceRef> contractInstanceRefList = request.getContractInstanceRefs();
+        List<ContractInstanceSnapshot> contractInstanceSnapshotList = contractInstanceRefList.stream().map(contractInstanceRef -> {
+            ContractInstanceSnapshot contractInstanceSnapshot = new ContractInstanceSnapshot();
+            BeanUtils.copyProperties(contractInstanceRef, contractInstanceSnapshot);
+            contractInstanceSnapshot.setWorkOrderNo(request.getWorkOrderNo());
+            return contractInstanceSnapshot;
         }).toList();
+        contractInstanceSnapshotService.batchInsert(contractInstanceSnapshotList);
+        contractInstanceSnapshotService.createBlockChainIfNotExist(contractInstanceSnapshotList);
     }
 
-    private static String buildKey(Long chainId, String contractAddress) {
-        String key = String.format("%d_%s", chainId, contractAddress);
-        return key;
-    }
 }
