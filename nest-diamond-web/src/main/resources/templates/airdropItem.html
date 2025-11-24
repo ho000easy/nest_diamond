@@ -46,91 +46,8 @@
                     </select>
                 </div>
             </div>
-            <div class="col-3 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">充值币种</span>
-                    <select name="tokenId" class="selectpicker form-control" data-live-search="true">
-                        <option data-tokens="请选择" text="请选择" value="">请选择</option>
-                        <th:block th:each="tokenMeta: ${tokenMetaList}">
-                            <option th:data-tokens="${tokenMeta.chainName} + '链---' + ${tokenMeta.tokenName}"
-                                    th:text="${tokenMeta.chainName} + '链---' + ${tokenMeta.tokenName}"
-                                    th:value="${tokenMeta.id}"></option>
-                        </th:block>
-                    </select>
-                </div>
-            </div>
-
-
         </div>
-        <div class="row">
 
-
-            <div class="col-3 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">ads账号</span>
-                    <select name="adsUserName" class="selectpicker form-control" data-live-search="true">
-                        <option data-tokens="请选择" text="请选择" value="">请选择</option>
-                        <option data-tokens="Apumpkinpie-笔记本" text="Apumpkinpie-笔记本" value="Apumpkinpie">
-                            Apumpkinpie-笔记本
-                        </option>
-                        <option data-tokens="1723425825-台式机" text="1723425825-台式机" value="1723425825">1723425825-台式机
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-3 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">ads浏览器</span>
-                    <input name="adsStartSequence" class="form-control" placeholder="起始序号" aria-label="start"
-                           aria-describedby="basic-addon1">
-                    <input name="adsEndSequence" class="form-control" placeholder="结束序号" aria-label="end"
-                           aria-describedby="basic-addon1">
-                </div>
-            </div>
-
-            <div class="col-3 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">ads钱包位置</span>
-                    <input name="adsBrowserWalletIndex" class="form-control" placeholder="2-10" aria-label="start"
-                           aria-describedby="basic-addon1">
-                </div>
-            </div>
-
-            <div class="col-3 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">地址</span>
-                    <input name="address" class="form-control" placeholder="地址" aria-label="start"
-                           aria-describedby="basic-addon1">
-                </div>
-            </div>
-            <div class="col-3 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">galaxyId</span>
-                    <input name="galaxyId" class="form-control" placeholder="galaxyId" aria-label="start"
-                           aria-describedby="basic-addon1">
-                </div>
-            </div>
-            <div class="col-3 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">序列列表</span>
-                    <input name="sequenceList" class="form-control" placeholder="2000" aria-label="end"
-                           aria-describedby="basic-addon1">
-                </div>
-            </div>
-            <div class="col-3 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">twitter</span>
-                    <textarea  name="searchTwitter" class="form-control" rows="2" placeholder="twitter账号,换行"
-                               aria-describedby="basic-addon1" value=""></textarea>
-                </div>
-            </div>
-            <div class="col-1 mt-3">
-                <div class="input-group">
-                    <button type="button" class="btn btn-primary m-2" id="search">查询</button>
-                </div>
-            </div>
-
-        </div>
 
     </form>
     <br>
@@ -146,29 +63,6 @@
                     <th>序列</th>
                     <th>种子</th>
                     <th>hd_index</th>
-                    <th>交易所</th>
-                    <th>交易所-用户</th>
-                    <th>交易所-账户序列</th>
-                    <th>链</th>
-                    <th>币种</th>
-                    <th>交易所-充值地址</th>
-                    <th>IP服务商</th>
-                    <th>IP代理序号</th>
-                    <th>IP代理</th>
-                    <th>别名邮箱类目</th>
-                    <th>别名邮箱</th>
-                    <th>别名邮箱序号</th>
-                    <th>ads用户</th>
-                    <th>ads浏览器序号</th>
-                    <th>cairoVersion</th>
-                    <th>discordName</th>
-                    <th>discord序号</th>
-                    <th>twitterName</th>
-                    <th>twitter序号</th>
-                    <th>云服务器IP</th>
-                    <th>购买交易所账号</th>
-                    <th>购买交易所密码</th>
-                    <th>galxeId</th>
                     <th>创建时间</th>
                     <th>修改时间</th>
                 </tr>

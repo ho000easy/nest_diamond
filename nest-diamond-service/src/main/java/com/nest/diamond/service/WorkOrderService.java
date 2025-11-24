@@ -56,6 +56,10 @@ public class WorkOrderService {
         workOrderIService.updateById(wo);
     }
 
+    public void deleteByIds(List<Long> ids){
+        workOrderIService.removeBatchByIds(ids, 5000);
+    }
+
 
     public WorkOrder validateWorkOrderAndAccount(Long airdropOperationId, String signerAddress) {
         // 1. 校验账户存在

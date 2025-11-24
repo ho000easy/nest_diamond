@@ -1,5 +1,6 @@
 package com.nest.diamond.dubbo.provider;
 
+import com.nest.diamond.common.enums.WorkOrderStatus;
 import com.nest.diamond.common.util.NumUtils;
 import com.nest.diamond.dubbo.api.WorkOrderDubboService;
 import com.nest.diamond.dubbo.dto.RpcResult;
@@ -55,6 +56,7 @@ public class WorkOrderDubboServiceImpl implements WorkOrderDubboService {
         workOrder.setAirdropId(airdrop.getId());
         workOrder.setAirdropName(airdrop.getName());
         workOrder.setApplyTime(new Date());
+        workOrder.setStatus(WorkOrderStatus.PENDING);
 
         workOrderService.insert(workOrder);
         return RpcResult.success(CreateWorkOrderResponse.create(request.getWorkOrderNo(), workOrder.getId()));

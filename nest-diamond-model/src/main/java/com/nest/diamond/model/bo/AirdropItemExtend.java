@@ -12,4 +12,5 @@ public class AirdropItemExtend extends AirdropItem {
     private Long seedId;
 
     private String seedPrefix;
+    private Integer hdIndex;
 }

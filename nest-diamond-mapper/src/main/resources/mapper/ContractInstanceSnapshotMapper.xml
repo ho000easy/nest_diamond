@@ -22,6 +22,6 @@
             </if>
 
         </where>
-        ORDER BY version DESC, create_time DESC
+        ORDER BY id DESC
     </select>
 </mapper>

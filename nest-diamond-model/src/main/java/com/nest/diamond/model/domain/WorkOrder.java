@@ -5,7 +5,6 @@ import com.nest.diamond.common.enums.WorkOrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 @Getter
@@ -46,6 +45,9 @@ public class WorkOrder {
 
     private Boolean isAllowTransfer;
     private Boolean isAllowDeployContract;
+
+    private Boolean isRequireContractCheck;
+    private Boolean isRequireContractFunctionCheck;
 
     private String remark;
 

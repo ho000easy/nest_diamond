@@ -1,4 +1,3 @@
-// src/main/java/com/nest/diamond/web/controller/WorkOrderController.java
 package com.nest.diamond.web.controller;
 
 import com.nest.diamond.common.enums.WorkOrderStatus;
@@ -47,5 +46,12 @@ public class WorkOrderController {
     public ApiResult reject(@RequestBody List<Long> ids) {
         ids.forEach(workOrderService::reject);
         return ApiResult.success("已拒绝");
+    }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public ApiResult delete(@RequestBody List<Long> ids) {
+        workOrderService.deleteByIds(ids);
+        return ApiResult.success("已删除");
     }
 }

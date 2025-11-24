@@ -6,6 +6,7 @@ import com.nest.diamond.model.domain.ContractInstanceSnapshot;
 import com.nest.diamond.model.domain.query.ContractInstanceSnapshotQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -56,5 +57,10 @@ public class ContractInstanceSnapshotService {
                 blockchainService.insert(_blockChain);
             }
         });
+    }
+
+    @Transactional
+    public void deleteByIds(List<Long> ids){
+        contractInstanceSnapshotIService.removeBatchByIds(ids, 5000);
     }
 }

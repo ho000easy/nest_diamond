@@ -8,4 +8,5 @@ public class ContractInstanceSnapshotQuery {
     private Long protocolName;
     private Long chainName;
     private Long contractName;
+    private String address;
 }

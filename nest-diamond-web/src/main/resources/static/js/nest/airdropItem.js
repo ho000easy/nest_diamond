@@ -1,27 +1,10 @@
 
 $(document).ready(function () {
     $('select').selectpicker();
-    let columnDefs = [{
-        'targets': 13,
-        'render': function (data, type, full, meta) {
-            if(full.ipProxyHost){
-                return `${full.ipProxyHost}:${full.ipProxyPort}:${full.ipProxyUserName}:${full.ipProxyPassword}`
-            }
-            return ''
-        }
-    },{
-        'targets': 13,
-        'className': 'link-primary proxy-link',
-        "render": function (data, type, row) {
-            return data
-        }
-    }];
+    let columnDefs = [];
 
     let airdropItemListTable = dataTable('airdropItemList', '/airdropItem/search',
-        ['id', 'accountAddress', 'sequence', 'seedPrefix', 'hdIndex',
-            'exchangeName', 'exchangeUserName', 'exchangeAccountSequence', 'chainName', 'tokenName', 'depositAddress',
-            'ipProxyVendor', 'ipProxyOrder', null,'emailCatalogName','emailAlias', 'emailOrder', 'adsUserName', 'adsBrowserSequence', 'cairoVersion',
-            'discordName', 'discordSequence', 'twitterName', 'twitterSequence', 'cloudServerIp', 'exchangeMetaName','exchangeMetaPwd','galaxyId','createTime','modifyTime'], params, null, columnDefs)
+        ['id', 'accountAddress', 'sequence', 'seedPrefix', 'hdIndex', 'createTime','modifyTime'], params, null, columnDefs)
 
     function params() {
         return $('#searchForm').serialize()

@@ -1,7 +1,13 @@
 // static/js/nest/workOrder.js
 $(document).ready(function () {
     let columnDefs = [
-
+        {
+            targets: 4,
+            className: 'seq-col', // 让这一列可以换行
+            render: function (data, type, row) {
+                return linkColumn(data)
+            }
+        },
         {
             targets: 5,
             className: 'seq-col', // 让这一列可以换行
@@ -33,11 +39,18 @@ $(document).ready(function () {
                 }
                 return badge;
             }
+        },
+        {
+            targets: 13,
+            className: 'text-center',
+            render: function (data, type, row) {
+                return `<a href="/contractInstanceSnapshot?workOrderNo=${row.workOrderNo}"  target="_blank" className="link-primary">合约实例快照</a>`
+            }
         }
     ]
     let table = multiSelectDataTable('workOrderTable', '/workOrder/search',
         ['id', 'workOrderNo', 'name', 'airdropOperationName', 'airdropName',
-            null, 'isAllowTransfer', 'isAllowDeployContract', 'status', 'applicant', 'applyTime', 'createTime', 'modifyTime'],
+            null, 'isAllowTransfer', 'isAllowDeployContract', 'status', 'applicant', 'applyTime', 'createTime', 'modifyTime', null],
         params, null, columnDefs);
 
     function params() {
@@ -46,6 +59,11 @@ $(document).ready(function () {
 
     $("#searchBtn").click(() => table.ajax.reload());
     $("#createBtn").click(() => $("#createModal").modal('show'));
+
+    $('#workOrderTable tbody').on('click', 'td img.link', function () {
+        let airdropId = table.row($(this).closest('tr')).data().airdropId
+        window.open(`airdropItem?airdropId=${airdropId}`);
+    });
 
     $("#saveBtn").click(function () {
         postForm('/workOrder/create', $("#createForm").serialize(), function (resp) {
@@ -71,4 +89,16 @@ $(document).ready(function () {
             processResp(resp, '已拒绝', () => table.ajax.reload());
         });
     });
+
+    $('#deleteBtn').click(function () {
+        if (!checkSelectedIds(table)) {
+            return;
+        }
+        postJson('/workOrder/delete', JSON.stringify(getSelectedIds(table)), function (resp) {
+            processResp(resp, '删除成功', function () {
+                table.ajax.reload(null, false);
+            })
+        })
+
+    })
 });
