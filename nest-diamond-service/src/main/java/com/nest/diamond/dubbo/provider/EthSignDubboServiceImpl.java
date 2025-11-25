@@ -8,18 +8,24 @@ import com.nest.diamond.dubbo.dto.RpcResult;
 import com.nest.diamond.dubbo.dto.sign.*;
 import com.nest.diamond.model.domain.*;
 import com.nest.diamond.service.*;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Hash;
 import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.StructuredDataEncoder;
 import org.web3j.service.TxSignServiceImpl;
 import org.web3j.utils.Numeric;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 
 @DubboService
 @Service
@@ -54,7 +60,7 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
     @Override
     public RpcResult<SignEip712MessageResponse> signEip712Message(SignEip712MessageRequest signEip712MessageRequest) {
         Ticket ticket = ticketService.validateTicketAndAccount(signEip712MessageRequest.getAirdropOperationId(), signEip712MessageRequest.getSignAddress());
-        ticketService.validateEip712Message(signEip712MessageRequest.getMessageHex());
+//        ticketService.validateEip712Message(signEip712MessageRequest.getMessageHex());
 
         SignatureLog signatureLog = buildAndSaveSignatureLogFromEip712Message(signEip712MessageRequest, ticket);
 
@@ -74,17 +80,25 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         return RpcResult.success(signPrefixedMessageResponse);
     }
 
+    @SneakyThrows
     private SignatureLog buildAndSaveSignatureLogFromEip712Message(SignEip712MessageRequest signEip712MessageRequest, Ticket ticket) {
         Account account = accountService.findByAddress(signEip712MessageRequest.getSignAddress());
-        String signature = SignUtil.signHashedMessage(Credentials.create(account.getPrivateKey()), Numeric.hexStringToByteArray(signEip712MessageRequest.getMessageHex()));
+        StructuredDataEncoder structuredDataEncoder = signEip712MessageRequest.getDomainSeparatorHex() == null
+                ? new StructuredDataEncoder(signEip712MessageRequest.getJsonMessage())
+                : new CustomStructuredDataEncoder(signEip712MessageRequest.getJsonMessage(), Numeric.hexStringToByteArray(signEip712MessageRequest.getDomainSeparatorHex()));
+
+//        String signature = SignUtil.signHashedMessage(Credentials.create(account.getPrivateKey()), Numeric.hexStringToByteArray(signEip712MessageRequest.getMessageHex()));
+        byte[] hashStructuredMessage = structuredDataEncoder.hashStructuredData();
+        String signature = SignUtil.signHashedMessage(Credentials.create(account.getPrivateKey()), hashStructuredMessage);
 
         SignatureLog signatureLog = new SignatureLog();
         signatureLog.setSignAddress(account.getAddress());
         signatureLog.setBizOrderNo(signEip712MessageRequest.getBizOrderNo());
         signatureLog.setAirdropOperationId(ticket.getAirdropOperationId());
         signatureLog.setAirdropOperationName(ticket.getAirdropOperationName());
-
-        signatureLog.setRawData(signEip712MessageRequest.getMessageHex());
+        String rawData = signEip712MessageRequest.getDomainSeparatorHex() == null ? signEip712MessageRequest.getJsonMessage()
+                : signEip712MessageRequest.getJsonMessage() + "\r\n" + signEip712MessageRequest.getDomainSeparatorHex();
+        signatureLog.setRawData(rawData);
         signatureLog.setSignedData(signature);
         signatureLog.setSignTime(new Date());
         signatureLog.setSignType(SignType.ETH_EIP712);
@@ -144,5 +158,6 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         signatureLogService.insert(signatureLog);
         return signatureLog;
     }
+
 
 }
