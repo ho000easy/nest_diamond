@@ -3,7 +3,7 @@ $(document).ready(function () {
     let columnDefs = [
     ]
     let contractInstanceListTable = multiSelectDataTable('contractInstanceList', '/contractInstanceSnapshot/search',
-        ['id', 'workOrderNo', 'protocolName', 'contractName', 'chainName', 'address', 'createTime', 'modifyTime'],
+        ['id', 'ticketNo', 'protocolName', 'contractName', 'chainName', 'address', 'createTime', 'modifyTime'],
         params, null, columnDefs)
 
     function params() {
@@ -48,7 +48,7 @@ $(document).ready(function () {
 
     })
     protocolChange()
-    $('#protocolId').change(protocolChange)
+    $('#protocolName').change(protocolChange)
 
     function protocolChange(){
         let protocolName = $("#protocolName").val()

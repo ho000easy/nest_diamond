@@ -1,7 +1,7 @@
 package com.nest.diamond.model.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.nest.diamond.common.enums.WorkOrderStatus;
+import com.nest.diamond.common.enums.TicketStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,8 +9,8 @@ import java.util.Date;
 
 @Getter
 @Setter
-@TableName("work_order")
-public class WorkOrder {
+@TableName("ticket")
+public class Ticket {
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -19,7 +19,7 @@ public class WorkOrder {
     private String name;
 
     /** 工单编号（唯一） */
-    private String workOrderNo;
+    private String ticketNo;
 
     private Long airdropOperationId;
     private String airdropOperationName;
@@ -35,7 +35,7 @@ public class WorkOrder {
     private Date endTime;
 
     /** 工单状态（枚举） */
-    private WorkOrderStatus status;
+    private TicketStatus status;
 
     /** 申请人 */
     private String applicant;

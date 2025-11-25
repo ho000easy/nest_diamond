@@ -5,8 +5,8 @@
     <select id="search" resultType="com.nest.diamond.model.domain.ContractInstanceSnapshot">
         SELECT * FROM contract_instance_snapshot
         <where>
-            <if test="workOrderNo != null and workOrderNo != ''">
-                and work_order_no = #{workOrderNo}
+            <if test="ticketNo != null and ticketNo != ''">
+                and ticket_no = #{ticketNo}
             </if>
             <if test="protocolName != null and protocolName != ''">
                 and protocol_name = #{protocolName}

@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class ContractInstanceSnapshotQuery {
-    private String workOrderNo;
-    private Long protocolName;
-    private Long chainName;
-    private Long contractName;
+    private String ticketNo;
+    private String protocolName;
+    private String chainName;
+    private String contractName;
     private String address;
 }

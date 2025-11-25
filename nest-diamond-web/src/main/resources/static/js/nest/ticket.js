@@ -1,4 +1,4 @@
-// static/js/nest/workOrder.js
+// static/js/nest/ticket.js
 $(document).ready(function () {
     let columnDefs = [
         {
@@ -44,12 +44,12 @@ $(document).ready(function () {
             targets: 13,
             className: 'text-center',
             render: function (data, type, row) {
-                return `<a href="/contractInstanceSnapshot?workOrderNo=${row.workOrderNo}"  target="_blank" className="link-primary">合约实例快照</a>`
+                return `<a href="/contractInstanceSnapshot?ticketNo=${row.ticketNo}"  target="_blank" className="link-primary">合约实例快照</a>`
             }
         }
     ]
-    let table = multiSelectDataTable('workOrderTable', '/workOrder/search',
-        ['id', 'workOrderNo', 'name', 'airdropOperationName', 'airdropName',
+    let table = multiSelectDataTable('ticketTable', '/ticket/search',
+        ['id', 'ticketNo', 'name', 'airdropOperationName', 'airdropName',
             null, 'isAllowTransfer', 'isAllowDeployContract', 'status', 'applicant', 'applyTime', 'createTime', 'modifyTime', null],
         params, null, columnDefs);
 
@@ -60,13 +60,13 @@ $(document).ready(function () {
     $("#searchBtn").click(() => table.ajax.reload());
     $("#createBtn").click(() => $("#createModal").modal('show'));
 
-    $('#workOrderTable tbody').on('click', 'td img.link', function () {
+    $('#ticketTable tbody').on('click', 'td img.link', function () {
         let airdropId = table.row($(this).closest('tr')).data().airdropId
         window.open(`airdropItem?airdropId=${airdropId}`);
     });
 
     $("#saveBtn").click(function () {
-        postForm('/workOrder/create', $("#createForm").serialize(), function (resp) {
+        postForm('/ticket/create', $("#createForm").serialize(), function (resp) {
             processResp(resp, '创建成功', function () {
                 $("#createModal").modal('hide');
                 table.ajax.reload();
@@ -77,7 +77,7 @@ $(document).ready(function () {
     $("#approveBtn").click(function () {
         let ids = getSelectedIds(table);
         if (ids.length === 0) return alert("请选择工单");
-        postJson('/workOrder/approve', JSON.stringify(ids), function (resp) {
+        postJson('/ticket/approve', JSON.stringify(ids), function (resp) {
             processResp(resp, '审批通过', () => table.ajax.reload());
         });
     });
@@ -85,7 +85,7 @@ $(document).ready(function () {
     $("#rejectBtn").click(function () {
         let ids = getSelectedIds(table);
         if (ids.length === 0) return alert("请选择工单");
-        postJson('/workOrder/reject', JSON.stringify(ids), function (resp) {
+        postJson('/ticket/reject', JSON.stringify(ids), function (resp) {
             processResp(resp, '已拒绝', () => table.ajax.reload());
         });
     });
@@ -94,7 +94,7 @@ $(document).ready(function () {
         if (!checkSelectedIds(table)) {
             return;
         }
-        postJson('/workOrder/delete', JSON.stringify(getSelectedIds(table)), function (resp) {
+        postJson('/ticket/delete', JSON.stringify(getSelectedIds(table)), function (resp) {
             processResp(resp, '删除成功', function () {
                 table.ajax.reload(null, false);
             })

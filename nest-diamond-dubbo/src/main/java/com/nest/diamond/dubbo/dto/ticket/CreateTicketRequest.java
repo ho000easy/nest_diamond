@@ -1,4 +1,4 @@
-package com.nest.diamond.dubbo.dto.work_order;
+package com.nest.diamond.dubbo.dto.ticket;
 
 import com.nest.diamond.dubbo.dto.BaseDTO;
 import jakarta.validation.constraints.NotBlank;
@@ -10,13 +10,13 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class CreateWorkOrderRequest extends BaseDTO {
+public class CreateTicketRequest extends BaseDTO {
 
     @NotBlank(message = "工单名称不能为空")
     private String name;
 
     @NotBlank(message = "工单编号不能为空")
-    private String workOrderNo;
+    private String ticketNo;
 
     @NotNull(message = "空投操作ID不能为空")
     private Long airdropOperationId;

@@ -12,14 +12,14 @@
             <div class="col-3 mt-4">
                 <div class="input-group">
                     <span class="input-group-text">工单编号</span>
-                    <input name="workOrderNo" class="form-control" placeholder="工单编号"
-                           aria-describedby="basic-addon1" th:value="${workOrderNo}">
+                    <input name="ticketNo" class="form-control" placeholder="工单编号"
+                           aria-describedby="basic-addon1" th:value="${ticketNo}">
                 </div>
             </div>
             <div class="col-3 mt-4">
                 <div class="input-group">
                     <span class="input-group-text">协议</span>
-                    <select id="protocolId" name="protocolId" class="selectpicker form-control" data-live-search="true">
+                    <select id="protocolName" name="protocolName" class="selectpicker form-control" data-live-search="true">
                         <option data-tokens="请选择" text="请选择" value="">请选择</option>
 
                         <th:block th:each="protocol: ${protocols}">
@@ -44,7 +44,7 @@
                 <div class="input-group">
                     <span class="input-group-text">链</span>
 
-                    <select name="chainId" class="selectpicker form-control" data-live-search="true">
+                    <select name="chainName" class="selectpicker form-control" data-live-search="true">
                         <option data-tokens="请选择" text="请选择" value="">请选择</option>
 
                         <th:block th:each="blockChain: ${blockChainList}">

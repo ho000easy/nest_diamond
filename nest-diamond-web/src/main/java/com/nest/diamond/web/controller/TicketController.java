@@ -1,10 +1,10 @@
 package com.nest.diamond.web.controller;
 
-import com.nest.diamond.common.enums.WorkOrderStatus;
-import com.nest.diamond.model.domain.WorkOrder;
-import com.nest.diamond.model.domain.query.WorkOrderQuery;
+import com.nest.diamond.common.enums.TicketStatus;
+import com.nest.diamond.model.domain.Ticket;
+import com.nest.diamond.model.domain.query.TicketQuery;
 import com.nest.diamond.model.vo.ApiResult;
-import com.nest.diamond.service.WorkOrderService;
+import com.nest.diamond.service.TicketService;
 import com.nest.diamond.web.vo.DataTableVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,44 +14,44 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @Controller
-@RequestMapping("/workOrder")
-public class WorkOrderController {
+@RequestMapping("/ticket")
+public class TicketController {
 
     @Autowired
-    private WorkOrderService workOrderService;
+    private TicketService ticketService;
 
     @GetMapping
-    public ModelAndView workOrder() {
-        ModelAndView modelAndView = new ModelAndView("workOrder");
-        modelAndView.addObject("workOrderStatusList", WorkOrderStatus.values());
+    public ModelAndView ticket() {
+        ModelAndView modelAndView = new ModelAndView("ticket");
+        modelAndView.addObject("ticketStatusList", TicketStatus.values());
         return modelAndView;
     }
 
     @PostMapping("/search")
     @ResponseBody
-    public DataTableVO<WorkOrder> search(WorkOrderQuery query) {
-        return DataTableVO.create(workOrderService.search(query));
+    public DataTableVO<Ticket> search(TicketQuery query) {
+        return DataTableVO.create(ticketService.search(query));
     }
 
 
     @PostMapping("/approve")
     @ResponseBody
     public ApiResult approve(@RequestBody List<Long> ids) {
-        ids.forEach(workOrderService::approve);
+        ids.forEach(ticketService::approve);
         return ApiResult.success("审批通过");
     }
 
     @PostMapping("/reject")
     @ResponseBody
     public ApiResult reject(@RequestBody List<Long> ids) {
-        ids.forEach(workOrderService::reject);
+        ids.forEach(ticketService::reject);
         return ApiResult.success("已拒绝");
     }
 
     @PostMapping("/delete")
     @ResponseBody
     public ApiResult delete(@RequestBody List<Long> ids) {
-        workOrderService.deleteByIds(ids);
+        ticketService.deleteByIds(ids);
         return ApiResult.success("已删除");
     }
 }

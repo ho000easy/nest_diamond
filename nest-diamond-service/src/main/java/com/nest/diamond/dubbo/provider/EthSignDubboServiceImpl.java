@@ -27,7 +27,7 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
     @Autowired
     private AccountService accountService;
     @Autowired
-    private WorkOrderService workOrderService;
+    private TicketService ticketService;
     @Autowired
     private SignatureLogService signatureLogService;
     @Autowired
@@ -39,10 +39,10 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
     @Override
     public RpcResult<SignRawTransactionResponse> signRawTransaction(SignRawTransactionRequest signRawTransactionRequest) {
         RawTransaction rawTransaction = signRawTransactionRequest.getRawTransaction();
-        WorkOrder workOrder = workOrderService.validateWorkOrderAndAccount(signRawTransactionRequest.getAirdropOperationId(), signRawTransactionRequest.getSignAddress());
-        workOrderService.validateRawTransaction(workOrder, rawTransaction, signRawTransactionRequest.getChainId());
+        Ticket ticket = ticketService.validateTicketAndAccount(signRawTransactionRequest.getAirdropOperationId(), signRawTransactionRequest.getSignAddress());
+        ticketService.validateRawTransaction(ticket, rawTransaction, signRawTransactionRequest.getChainId());
 
-        SignatureLog signatureLog = buildAndSaveSignatureLogFromRawTransaction(signRawTransactionRequest, workOrder);
+        SignatureLog signatureLog = buildAndSaveSignatureLogFromRawTransaction(signRawTransactionRequest, ticket);
 
         SignRawTransactionResponse signRawTransactionResponse = new SignRawTransactionResponse();
         signRawTransactionResponse.setSignedRawTransaction(signatureLog.getSignedData());
@@ -53,10 +53,10 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
 
     @Override
     public RpcResult<SignEip712MessageResponse> signEip712Message(SignEip712MessageRequest signEip712MessageRequest) {
-        WorkOrder workOrder = workOrderService.validateWorkOrderAndAccount(signEip712MessageRequest.getAirdropOperationId(), signEip712MessageRequest.getSignAddress());
-        workOrderService.validateEip712Message(signEip712MessageRequest.getMessageHex());
+        Ticket ticket = ticketService.validateTicketAndAccount(signEip712MessageRequest.getAirdropOperationId(), signEip712MessageRequest.getSignAddress());
+        ticketService.validateEip712Message(signEip712MessageRequest.getMessageHex());
 
-        SignatureLog signatureLog = buildAndSaveSignatureLogFromEip712Message(signEip712MessageRequest, workOrder);
+        SignatureLog signatureLog = buildAndSaveSignatureLogFromEip712Message(signEip712MessageRequest, ticket);
 
         SignEip712MessageResponse signEip712MessageResponse = new SignEip712MessageResponse();
         signEip712MessageResponse.setSignature(signatureLog.getSignedData());
@@ -66,23 +66,23 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
 
     @Override
     public RpcResult<SignPrefixedMessageResponse> signPrefixedMessage(SignPrefixedMessageRequest signPrefixedMessageRequest) {
-        WorkOrder workOrder = workOrderService.validateWorkOrderAndAccount(signPrefixedMessageRequest.getAirdropOperationId(), signPrefixedMessageRequest.getSignAddress());
-        SignatureLog signatureLog = buildAndSaveSignatureLogFromPrefixedMessage(signPrefixedMessageRequest, workOrder);
+        Ticket ticket = ticketService.validateTicketAndAccount(signPrefixedMessageRequest.getAirdropOperationId(), signPrefixedMessageRequest.getSignAddress());
+        SignatureLog signatureLog = buildAndSaveSignatureLogFromPrefixedMessage(signPrefixedMessageRequest, ticket);
 
         SignPrefixedMessageResponse signPrefixedMessageResponse = new SignPrefixedMessageResponse();
         signPrefixedMessageResponse.setSignature(signatureLog.getSignedData());
         return RpcResult.success(signPrefixedMessageResponse);
     }
 
-    private SignatureLog buildAndSaveSignatureLogFromEip712Message(SignEip712MessageRequest signEip712MessageRequest, WorkOrder workOrder) {
+    private SignatureLog buildAndSaveSignatureLogFromEip712Message(SignEip712MessageRequest signEip712MessageRequest, Ticket ticket) {
         Account account = accountService.findByAddress(signEip712MessageRequest.getSignAddress());
         String signature = SignUtil.signHashedMessage(Credentials.create(account.getPrivateKey()), Numeric.hexStringToByteArray(signEip712MessageRequest.getMessageHex()));
 
         SignatureLog signatureLog = new SignatureLog();
         signatureLog.setSignAddress(account.getAddress());
         signatureLog.setBizOrderNo(signEip712MessageRequest.getBizOrderNo());
-        signatureLog.setAirdropOperationId(workOrder.getAirdropOperationId());
-        signatureLog.setAirdropOperationName(workOrder.getAirdropOperationName());
+        signatureLog.setAirdropOperationId(ticket.getAirdropOperationId());
+        signatureLog.setAirdropOperationName(ticket.getAirdropOperationName());
 
         signatureLog.setRawData(signEip712MessageRequest.getMessageHex());
         signatureLog.setSignedData(signature);
@@ -92,15 +92,15 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         return signatureLog;
     }
 
-    private SignatureLog buildAndSaveSignatureLogFromPrefixedMessage(SignPrefixedMessageRequest signPrefixedMessageRequest, WorkOrder workOrder) {
+    private SignatureLog buildAndSaveSignatureLogFromPrefixedMessage(SignPrefixedMessageRequest signPrefixedMessageRequest, Ticket ticket) {
         Account account = accountService.findByAddress(signPrefixedMessageRequest.getSignAddress());
         String signature = SignUtil.signPrefixedMessage(Credentials.create(account.getPrivateKey()), signPrefixedMessageRequest.getMessage());
 
         SignatureLog signatureLog = new SignatureLog();
         signatureLog.setSignAddress(account.getAddress());
         signatureLog.setBizOrderNo(signPrefixedMessageRequest.getBizOrderNo());
-        signatureLog.setAirdropOperationId(workOrder.getAirdropOperationId());
-        signatureLog.setAirdropOperationName(workOrder.getAirdropOperationName());
+        signatureLog.setAirdropOperationId(ticket.getAirdropOperationId());
+        signatureLog.setAirdropOperationName(ticket.getAirdropOperationName());
 
         signatureLog.setRawData(signPrefixedMessageRequest.getMessage());
         signatureLog.setSignedData(signature);
@@ -110,7 +110,7 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         return signatureLog;
     }
 
-    private SignatureLog buildAndSaveSignatureLogFromRawTransaction(SignRawTransactionRequest signRawTransactionRequest, WorkOrder workOrder) {
+    private SignatureLog buildAndSaveSignatureLogFromRawTransaction(SignRawTransactionRequest signRawTransactionRequest, Ticket ticket) {
         RawTransaction rawTransaction = signRawTransactionRequest.getRawTransaction();
 
         Account account = accountService.findByAddress(signRawTransactionRequest.getSignAddress());
@@ -121,8 +121,8 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         SignatureLog signatureLog = new SignatureLog();
         signatureLog.setSignAddress(signRawTransactionRequest.getSignAddress());
         signatureLog.setBizOrderNo(signRawTransactionRequest.getBizOrderNo());
-        signatureLog.setAirdropOperationId(workOrder.getAirdropOperationId());
-        signatureLog.setAirdropOperationName(workOrder.getAirdropOperationName());
+        signatureLog.setAirdropOperationId(ticket.getAirdropOperationId());
+        signatureLog.setAirdropOperationName(ticket.getAirdropOperationName());
 
         BlockChain blockChain = blockchainService.findByChainId(signRawTransactionRequest.getChainId());
         signatureLog.setChainId(blockChain.getChainId());
@@ -137,7 +137,7 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
 
         if(StringUtils.isNotEmpty(rawTransaction.getTo()) && StringUtils.isNotEmpty(rawTransaction.getData())){
             ContractInstanceSnapshot snapshot = contractInstanceSnapshotService
-                    .findByChainIdAndContractAddress(workOrder.getWorkOrderNo(), signRawTransactionRequest.getChainId(), rawTransaction.getTo());
+                    .findBy(ticket.getTicketNo(), signRawTransactionRequest.getChainId(), rawTransaction.getTo());
             signatureLog.setContractInstanceSnapshotId(snapshot.getId());
             signatureLog.setContractName(snapshot.getContractName());
         }

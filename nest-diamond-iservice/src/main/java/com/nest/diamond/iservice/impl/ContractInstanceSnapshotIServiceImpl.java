@@ -6,15 +6,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nest.diamond.iservice.ContractInstanceSnapshotIService;
 import com.nest.diamond.mapper.ContractInstanceSnapshotMapper;
-import com.nest.diamond.model.domain.ContractInstance;
 import com.nest.diamond.model.domain.ContractInstanceSnapshot;
 import com.nest.diamond.model.domain.query.ContractInstanceSnapshotQuery;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ContractInstanceSnapshotIServiceImpl
@@ -27,9 +23,9 @@ public class ContractInstanceSnapshotIServiceImpl
     }
 
     @Override
-    public ContractInstanceSnapshot findByChainIdAndContractAddress(String workOrderNo, Long chainId, String contractAddress) {
+    public ContractInstanceSnapshot findBy(String ticketNo, Long chainId, String contractAddress) {
         LambdaQueryWrapper<ContractInstanceSnapshot> queryWrapper = new QueryWrapper<ContractInstanceSnapshot>().lambda();
-        queryWrapper.eq(ContractInstanceSnapshot::getWorkOrderNo, workOrderNo);
+        queryWrapper.eq(ContractInstanceSnapshot::getTicketNo, ticketNo);
         queryWrapper.eq(ContractInstanceSnapshot::getChainId, chainId);
         queryWrapper.eq(ContractInstanceSnapshot::getAddress, contractAddress);
         return super.getOne(queryWrapper);

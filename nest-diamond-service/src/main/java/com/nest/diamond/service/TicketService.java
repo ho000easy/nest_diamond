@@ -1,13 +1,12 @@
-// src/main/java/com/nest/diamond/service/WorkOrderService.java
 package com.nest.diamond.service;
 
-import com.nest.diamond.common.enums.WorkOrderStatus;
-import com.nest.diamond.iservice.WorkOrderIService;
+import com.nest.diamond.common.enums.TicketStatus;
+import com.nest.diamond.iservice.TicketIService;
 import com.nest.diamond.model.domain.Account;
 import com.nest.diamond.model.domain.AirdropItem;
 import com.nest.diamond.model.domain.ContractInstanceSnapshot;
-import com.nest.diamond.model.domain.WorkOrder;
-import com.nest.diamond.model.domain.query.WorkOrderQuery;
+import com.nest.diamond.model.domain.Ticket;
+import com.nest.diamond.model.domain.query.TicketQuery;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +20,10 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class WorkOrderService {
+public class TicketService {
 
     @Autowired
-    private WorkOrderIService workOrderIService;
+    private TicketIService ticketIService;
     @Autowired
     private AccountService accountService;
     @Autowired
@@ -32,86 +31,98 @@ public class WorkOrderService {
     @Autowired
     private AirdropItemService airdropItemService;
 
-    public List<WorkOrder> search(WorkOrderQuery query) {
-        return workOrderIService.search(query);
+    public List<Ticket> search(TicketQuery query) {
+        return ticketIService.search(query);
     }
 
-    public List<WorkOrder> findByAirdropOperationId(Long airdropOperationId){
-        return workOrderIService.findByAirdropOperationId(airdropOperationId);
+    public List<Ticket> findByTicketNos(List<String> ticketNoList){
+        return ticketIService.findByTicketNos(ticketNoList);
     }
 
-    public void insert(WorkOrder workOrder) {
-        workOrderIService.save(workOrder);
+    public Ticket findByTicketNo(String ticketNo){
+        return ticketIService.findByTicketNo(ticketNo);
+    }
+
+    public Ticket findByTicketName(String name){
+        return ticketIService.findByName(name);
+    }
+
+    public List<Ticket> findByAirdropOperationId(Long airdropOperationId){
+        return ticketIService.findByAirdropOperationId(airdropOperationId);
+    }
+
+    public void insert(Ticket ticket) {
+        ticketIService.save(ticket);
     }
 
     public void approve(Long id) {
-        WorkOrder wo = workOrderIService.getById(id);
-        wo.setStatus(WorkOrderStatus.APPROVED);
-        workOrderIService.updateById(wo);
+        Ticket wo = ticketIService.getById(id);
+        wo.setStatus(TicketStatus.APPROVED);
+        ticketIService.updateById(wo);
     }
 
     public void reject(Long id) {
-        WorkOrder wo = workOrderIService.getById(id);
-        wo.setStatus(WorkOrderStatus.REJECTED);
-        workOrderIService.updateById(wo);
+        Ticket wo = ticketIService.getById(id);
+        wo.setStatus(TicketStatus.REJECTED);
+        ticketIService.updateById(wo);
     }
 
     public void deleteByIds(List<Long> ids){
-        workOrderIService.removeBatchByIds(ids, 5000);
+        ticketIService.removeBatchByIds(ids, 5000);
     }
 
 
-    public WorkOrder validateWorkOrderAndAccount(Long airdropOperationId, String signerAddress) {
+    public Ticket validateTicketAndAccount(Long airdropOperationId, String signerAddress) {
         // 1. 校验账户存在
         Account account = accountService.findByAddress(signerAddress);
         Assert.notNull(account, () -> "签名账户不存在: " + signerAddress);
 
         // 2. 查找工单
-        List<WorkOrder> workOrders = findByAirdropOperationId(airdropOperationId);
-        Assert.isTrue(CollectionUtils.isNotEmpty(workOrders),
+        List<Ticket> tickets = findByAirdropOperationId(airdropOperationId);
+        Assert.isTrue(CollectionUtils.isNotEmpty(tickets),
                 () -> "空投操作ID不存在对应工单: " + airdropOperationId);
 
-        WorkOrder workOrder = workOrders.get(0);
+        Ticket ticket = tickets.get(0);
 
-        AirdropItem airdropItem = airdropItemService.findByAirdropIdAndAddress(workOrder.getAirdropId(), signerAddress);
+        AirdropItem airdropItem = airdropItemService.findByAirdropIdAndAddress(ticket.getAirdropId(), signerAddress);
         Assert.notNull(airdropItem, "空投项目下没有此地址对应的条目");
 
         // 3. 工单状态校验
-        if (workOrder.getStatus() == WorkOrderStatus.PENDING) {
+        if (ticket.getStatus() == TicketStatus.PENDING) {
             throw new RuntimeException("工单还在审批中");
         }
-        if (workOrder.getStatus() == WorkOrderStatus.REJECTED) {
+        if (ticket.getStatus() == TicketStatus.REJECTED) {
             throw new RuntimeException("工单已被拒绝");
         }
         Date currentDate = new Date();
-        if(currentDate.before(workOrder.getStartTime())){
+        if(currentDate.before(ticket.getStartTime())){
             throw new RuntimeException("工单还未到开启时间");
         }
-        if(currentDate.after(workOrder.getEndTime())){
+        if(currentDate.after(ticket.getEndTime())){
             throw new RuntimeException("工单已经截至时间");
         }
-        return workOrder;
+        return ticket;
     }
 
 
-    public void validateRawTransaction(WorkOrder workOrder, RawTransaction rawTx, Long chainId) {
+    public void validateRawTransaction(Ticket ticket, RawTransaction rawTx, Long chainId) {
         // 部署合约校验
         if (StringUtils.isEmpty(rawTx.getTo())) {
-            Assert.isTrue(workOrder.getIsAllowDeployContract(),
+            Assert.isTrue(ticket.getIsAllowDeployContract(),
                     "当前工单不允许部署合约");
             return;
         }
 
         // 转账校验（data 为空且 value > 0）
         if (StringUtils.isEmpty(rawTx.getData()) && rawTx.getValue().compareTo(BigInteger.ZERO) > 0) {
-            Assert.isTrue(workOrder.getIsAllowTransfer(),
+            Assert.isTrue(ticket.getIsAllowTransfer(),
                     "当前工单不允许转账");
             return;
         }
 
         // 合约白名单校验（to 不为空时）
         ContractInstanceSnapshot snapshot = contractInstanceSnapshotService
-                .findByChainIdAndContractAddress(workOrder.getWorkOrderNo(), chainId, rawTx.getTo());
+                .findBy(ticket.getTicketNo(), chainId, rawTx.getTo());
         Assert.notNull(snapshot, "合约地址不在工单白名单中: " + rawTx.getTo());
     }
 

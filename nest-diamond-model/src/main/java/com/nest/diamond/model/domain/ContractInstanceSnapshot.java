@@ -15,7 +15,7 @@ public class ContractInstanceSnapshot {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private String workOrderNo;          // 工单编号（业务唯一标识）
+    private String ticketNo;          // 工单编号（业务唯一标识）
     private Long chainId;
     private String chainName;
     private String protocolName;

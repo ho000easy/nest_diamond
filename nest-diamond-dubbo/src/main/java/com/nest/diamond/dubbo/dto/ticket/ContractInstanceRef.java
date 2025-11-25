@@ -1,4 +1,4 @@
-package com.nest.diamond.dubbo.dto.work_order;
+package com.nest.diamond.dubbo.dto.ticket;
 
 import lombok.Data;
 

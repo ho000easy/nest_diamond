@@ -28,8 +28,8 @@ public class ContractInstanceSnapshotService {
         return contractInstanceSnapshotIService.search(query);
     }
 
-    public ContractInstanceSnapshot findByChainIdAndContractAddress(String workOrderNo, Long chainId, String contractAddress){
-        return contractInstanceSnapshotIService.findByChainIdAndContractAddress(workOrderNo, chainId, contractAddress);
+    public ContractInstanceSnapshot findBy(String ticketNo, Long chainId, String contractAddress){
+        return contractInstanceSnapshotIService.findBy(ticketNo, chainId, contractAddress);
     }
 
     public void batchInsert(List<ContractInstanceSnapshot> contractInstanceSnapshotList){

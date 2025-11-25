@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: header}"></head>
-<script src="/js/nest/workOrder.js"></script>
+<script src="/js/nest/ticket.js"></script>
 <body>
 
 <div class="container">
@@ -18,7 +18,7 @@
             <div class="col-3 mt-4">
                 <div class="input-group">
                     <span class="input-group-text">工单编号</span>
-                    <input name="workOrderNo" class="form-control" placeholder="工单编号"
+                    <input name="ticketNo" class="form-control" placeholder="工单编号"
                            aria-describedby="basic-addon1" value="">
                 </div>
             </div>
@@ -34,10 +34,10 @@
                     <span class="input-group-text">状态</span>
                     <select name="status" class="selectpicker form-control" data-live-search="true">
                         <option data-tokens="请选择" text="请选择" value="">请选择</option>
-                        <th:block th:each="workOrder: ${workOrderStatusList}">
-                            <option th:data-tokens="${workOrder.desc}"
-                                    th:text="${workOrder.desc}"
-                                    th:value="${workOrder.name}"></option>
+                        <th:block th:each="ticket: ${ticketStatusList}">
+                            <option th:data-tokens="${ticket.desc}"
+                                    th:text="${ticket.desc}"
+                                    th:value="${ticket.name}"></option>
                         </th:block>
 
                     </select>
@@ -57,7 +57,7 @@
 
     <div class="row mt-4">
         <div class="col-12">
-            <table id="workOrderTable"  class="stripe" style="font-size: 12px">
+            <table id="ticketTable"  class="stripe" style="font-size: 12px">
                 <thead>
                 <tr>
                     <th><input type="checkbox" name="select_all" value="1" class="example-select-all"></th>
