@@ -80,7 +80,7 @@ public class AccountIServiceImpl extends ServiceImpl<AccountMapper, Account> imp
     }
 
     @Override
-    public Account selectOne() {
+    public Account selectNonCustodyOne() {
         LambdaQueryWrapper<Account> queryWrapper = new QueryWrapper<Account>().lambda();
         queryWrapper.eq(Account::getType, AccountType.NON_CUSTODY);
         queryWrapper.eq(Account::getWalletVendor, WalletVendor.METAMASK);

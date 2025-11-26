@@ -64,6 +64,10 @@ public class AccountService {
         return accountIService.search(iPage, accountQuery);
     }
 
+    public Account selectNonCustodyOne(){
+        return accountIService.selectNonCustodyOne();
+    }
+
 
     public Account findById(Long id) {
         return accountIService.getById(id);

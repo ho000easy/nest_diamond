@@ -25,7 +25,7 @@ public interface AccountIService extends IService<Account> {
 
     List<Account> findAccounts(Long seedId, List<Integer> hdIndexList);
 
-    Account selectOne();
+    Account selectNonCustodyOne();
 
     List<Account> search(AccountQuery accountQuery);
 
