@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: header}"></head>
+<link href="css/nest/signatureLog.css" rel="stylesheet">
+
 <script src="/js/nest/signatureLog.js"></script>
 <body>
 
@@ -11,7 +13,7 @@
                 <div class="input-group">
                     <span class="input-group-text">工单编号</span>
                     <input name="ticketNo" class="form-control" placeholder="工单编号"
-                           aria-describedby="basic-addon1" value="">
+                           aria-describedby="basic-addon1" th:value="${ticketNo}">
                 </div>
             </div>
             <div class="col-3 mt-4">
@@ -84,7 +86,7 @@
                     <th>业务订单号</th>
                     <th>原始消息</th>
                     <th>签名后消息</th>
-                    <th>合约地址</th>
+                    <th>合约名称</th>
                     <th>链名称</th>
                     <th>签名类型</th>
                     <th>签名时间</th>

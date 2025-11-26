@@ -1,23 +1,27 @@
 package com.nest.diamond.service;
 
 import com.nest.diamond.common.enums.TicketStatus;
+import com.nest.diamond.common.util.InnerFunctionEncoder;
 import com.nest.diamond.iservice.TicketIService;
 import com.nest.diamond.model.domain.Account;
 import com.nest.diamond.model.domain.AirdropItem;
 import com.nest.diamond.model.domain.ContractInstanceSnapshot;
 import com.nest.diamond.model.domain.Ticket;
 import com.nest.diamond.model.domain.query.TicketQuery;
+import com.nest.diamond.model.vo.UpdateTicketReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Type;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TicketService {
@@ -33,6 +37,10 @@ public class TicketService {
 
     public List<Ticket> search(TicketQuery query) {
         return ticketIService.search(query);
+    }
+
+    public Ticket findById(Long id){
+        return ticketIService.getById(id);
     }
 
     public List<Ticket> findByTicketNos(List<String> ticketNoList){
@@ -53,6 +61,13 @@ public class TicketService {
 
     public void insert(Ticket ticket) {
         ticketIService.save(ticket);
+    }
+
+    public void update(UpdateTicketReq updateTicketReq){
+        Ticket ticket = findById(updateTicketReq.getId());
+        ticket.setIsRequireContractCheck(updateTicketReq.getIsRequireContractCheck());
+        ticket.setIsRequireContractFunctionCheck(updateTicketReq.getIsRequireContractFunctionCheck());
+        ticketIService.updateById(ticket);
     }
 
     public void approve(Long id) {
@@ -79,6 +94,8 @@ public class TicketService {
 
         // 2. 查找工单
         List<Ticket> tickets = findByAirdropOperationId(airdropOperationId);
+        tickets.sort(Comparator.comparing(Ticket::getId).reversed());
+
         Assert.isTrue(CollectionUtils.isNotEmpty(tickets),
                 () -> "空投操作ID不存在对应工单: " + airdropOperationId);
 
@@ -101,6 +118,7 @@ public class TicketService {
         if(currentDate.after(ticket.getEndTime())){
             throw new RuntimeException("工单已经截至时间");
         }
+
         return ticket;
     }
 
@@ -119,11 +137,30 @@ public class TicketService {
                     "当前工单不允许转账");
             return;
         }
+        if(!ticket.getIsRequireContractCheck()){
+            return;
+        }
+
+        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
+                "approve",
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(Address.DEFAULT.toString()),
+                        new org.web3j.abi.datatypes.generated.Uint256(BigInteger.ZERO)),
+                Collections.<TypeReference<?>>emptyList());
+        String methodId = InnerFunctionEncoder.buildMethodID(function);
+        if(StringUtils.startsWith(rawTx.getData(), Numeric.cleanHexPrefix(methodId))){
+            List<Type> inputParams = InnerFunctionEncoder.decodeInputData(rawTx.getData().substring(8), function);
+            String spender = inputParams.get(0).toString();
+            checkContractInWhiteList(ticket, spender, chainId);
+        }
 
         // 合约白名单校验（to 不为空时）
+        checkContractInWhiteList(ticket, rawTx.getTo(), chainId);
+    }
+
+    private void checkContractInWhiteList(Ticket ticket, String contractAddress, Long chainId) {
         ContractInstanceSnapshot snapshot = contractInstanceSnapshotService
-                .findBy(ticket.getTicketNo(), chainId, rawTx.getTo());
-        Assert.notNull(snapshot, "合约地址不在工单白名单中: " + rawTx.getTo());
+                .findBy(ticket.getTicketNo(), chainId, contractAddress);
+        Assert.notNull(snapshot, "合约地址不在工单白名单中: " + contractAddress);
     }
 
 

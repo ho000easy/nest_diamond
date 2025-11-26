@@ -6,6 +6,8 @@ import com.nest.diamond.model.domain.query.TicketQuery;
 import com.nest.diamond.model.vo.ApiResult;
 import com.nest.diamond.service.TicketService;
 import com.nest.diamond.web.vo.DataTableVO;
+import com.nest.diamond.model.vo.UpdateTicketReq;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,13 @@ public class TicketController {
     public ApiResult approve(@RequestBody List<Long> ids) {
         ids.forEach(ticketService::approve);
         return ApiResult.success("审批通过");
+    }
+
+    @RequestMapping("/update")
+    @ResponseBody
+    public ApiResult update(@Valid UpdateTicketReq updateTicketReq) {
+        ticketService.update(updateTicketReq);
+        return ApiResult.success();
     }
 
     @PostMapping("/reject")

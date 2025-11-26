@@ -9,6 +9,7 @@ import com.nest.diamond.dubbo.dto.sign.*;
 import com.nest.diamond.model.domain.*;
 import com.nest.diamond.service.*;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
+@Slf4j
 @DubboService
 @Service
 public class EthSignDubboServiceImpl implements EthSignDubboService {
@@ -44,21 +46,26 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
     @Transactional
     @Override
     public RpcResult<SignRawTransactionResponse> signRawTransaction(SignRawTransactionRequest signRawTransactionRequest) {
-        RawTransaction rawTransaction = signRawTransactionRequest.getRawTransaction();
+        log.info("eth交易签名开始，bizOrderNo {}, airdropOperationId {}", signRawTransactionRequest.getBizOrderNo(), signRawTransactionRequest.getAirdropOperationId());
+        RawTransaction rawTransaction = toWeb3jRawTransaction(signRawTransactionRequest.getTransactionDTO());
         Ticket ticket = ticketService.validateTicketAndAccount(signRawTransactionRequest.getAirdropOperationId(), signRawTransactionRequest.getSignAddress());
         ticketService.validateRawTransaction(ticket, rawTransaction, signRawTransactionRequest.getChainId());
 
-        SignatureLog signatureLog = buildAndSaveSignatureLogFromRawTransaction(signRawTransactionRequest, ticket);
+        SignatureLog signatureLog = buildAndSaveSignatureLogFromRawTransaction(signRawTransactionRequest, rawTransaction, ticket);
 
         SignRawTransactionResponse signRawTransactionResponse = new SignRawTransactionResponse();
         signRawTransactionResponse.setSignedRawTransaction(signatureLog.getSignedData());
         signRawTransactionResponse.setTxHash(signatureLog.getTx());
+        log.info("eth交易签名成功，bizOrderNo {}, airdropOperationId {}", signRawTransactionRequest.getBizOrderNo(), signRawTransactionRequest.getAirdropOperationId());
+
         return RpcResult.success(signRawTransactionResponse);
     }
 
 
     @Override
     public RpcResult<SignEip712MessageResponse> signEip712Message(SignEip712MessageRequest signEip712MessageRequest) {
+        log.info("EIP712签名开始，bizOrderNo {}, airdropOperationId {}", signEip712MessageRequest.getBizOrderNo(), signEip712MessageRequest.getAirdropOperationId());
+
         Ticket ticket = ticketService.validateTicketAndAccount(signEip712MessageRequest.getAirdropOperationId(), signEip712MessageRequest.getSignAddress());
 //        ticketService.validateEip712Message(signEip712MessageRequest.getMessageHex());
 
@@ -66,17 +73,22 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
 
         SignEip712MessageResponse signEip712MessageResponse = new SignEip712MessageResponse();
         signEip712MessageResponse.setSignature(signatureLog.getSignedData());
+        log.info("EIP712签名成功，bizOrderNo {}, airdropOperationId {}", signEip712MessageRequest.getBizOrderNo(), signEip712MessageRequest.getAirdropOperationId());
 
         return RpcResult.success(signEip712MessageResponse);
     }
 
     @Override
     public RpcResult<SignPrefixedMessageResponse> signPrefixedMessage(SignPrefixedMessageRequest signPrefixedMessageRequest) {
+        log.info("eth prefix签名开始，bizOrderNo {}, airdropOperationId {}", signPrefixedMessageRequest.getBizOrderNo(), signPrefixedMessageRequest.getAirdropOperationId());
+
         Ticket ticket = ticketService.validateTicketAndAccount(signPrefixedMessageRequest.getAirdropOperationId(), signPrefixedMessageRequest.getSignAddress());
         SignatureLog signatureLog = buildAndSaveSignatureLogFromPrefixedMessage(signPrefixedMessageRequest, ticket);
 
         SignPrefixedMessageResponse signPrefixedMessageResponse = new SignPrefixedMessageResponse();
         signPrefixedMessageResponse.setSignature(signatureLog.getSignedData());
+        log.info("eth prefix签名成功，bizOrderNo {}, airdropOperationId {}", signPrefixedMessageRequest.getBizOrderNo(), signPrefixedMessageRequest.getAirdropOperationId());
+
         return RpcResult.success(signPrefixedMessageResponse);
     }
 
@@ -92,6 +104,7 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         String signature = SignUtil.signHashedMessage(Credentials.create(account.getPrivateKey()), hashStructuredMessage);
 
         SignatureLog signatureLog = new SignatureLog();
+        signatureLog.setTicketNo(ticket.getTicketNo());
         signatureLog.setSignAddress(account.getAddress());
         signatureLog.setBizOrderNo(signEip712MessageRequest.getBizOrderNo());
         signatureLog.setAirdropOperationId(ticket.getAirdropOperationId());
@@ -111,6 +124,7 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         String signature = SignUtil.signPrefixedMessage(Credentials.create(account.getPrivateKey()), signPrefixedMessageRequest.getMessage());
 
         SignatureLog signatureLog = new SignatureLog();
+        signatureLog.setTicketNo(ticket.getTicketNo());
         signatureLog.setSignAddress(account.getAddress());
         signatureLog.setBizOrderNo(signPrefixedMessageRequest.getBizOrderNo());
         signatureLog.setAirdropOperationId(ticket.getAirdropOperationId());
@@ -124,15 +138,15 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         return signatureLog;
     }
 
-    private SignatureLog buildAndSaveSignatureLogFromRawTransaction(SignRawTransactionRequest signRawTransactionRequest, Ticket ticket) {
-        RawTransaction rawTransaction = signRawTransactionRequest.getRawTransaction();
+    private SignatureLog buildAndSaveSignatureLogFromRawTransaction(SignRawTransactionRequest signRawTransactionRequest, RawTransaction rawTransaction, Ticket ticket) {
 
         Account account = accountService.findByAddress(signRawTransactionRequest.getSignAddress());
         TxSignServiceImpl txSignService = new TxSignServiceImpl(Credentials.create(account.getPrivateKey()));
-        byte[] signedMessage = txSignService.sign(signRawTransactionRequest.getRawTransaction(), signRawTransactionRequest.getChainId());
+        byte[] signedMessage = txSignService.sign(rawTransaction, signRawTransactionRequest.getChainId());
         String signedMessageHex = Numeric.toHexString(signedMessage);
 
         SignatureLog signatureLog = new SignatureLog();
+        signatureLog.setTicketNo(ticket.getTicketNo());
         signatureLog.setSignAddress(signRawTransactionRequest.getSignAddress());
         signatureLog.setBizOrderNo(signRawTransactionRequest.getBizOrderNo());
         signatureLog.setAirdropOperationId(ticket.getAirdropOperationId());
@@ -144,7 +158,7 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         String tx = Hash.sha3(signedMessageHex);
 
         signatureLog.setTx(tx);
-        signatureLog.setRawData(JsonUtils.toJson(signRawTransactionRequest.getRawTransaction()));
+        signatureLog.setRawData(JsonUtils.toJson(signRawTransactionRequest.getTransactionDTO()));
         signatureLog.setSignedData(signedMessageHex);
         signatureLog.setSignTime(new Date());
         signatureLog.setSignType(SignType.ETH_TRANSACTION);
@@ -159,5 +173,35 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
         return signatureLog;
     }
 
+
+    /**
+     * 转换为 Web3j 的 RawTransaction 对象
+     * 自动根据字段判断生成 Legacy 还是 EIP-1559 对象
+     */
+    public RawTransaction toWeb3jRawTransaction(TransactionDTO transactionDTO) {
+        if (transactionDTO.isEip1559()) {
+            // 构造 EIP-1559 交易
+            return RawTransaction.createTransaction(
+                    transactionDTO.getChainId(), // Web3j 部分版本 createTransaction 需要 chainId
+                    transactionDTO.getNonce(),
+                    transactionDTO.getGasLimit(),
+                    transactionDTO.getTo(),
+                    transactionDTO.getValue(),
+                    transactionDTO.getData(),
+                    transactionDTO.getMaxPriorityFeePerGas(),
+                    transactionDTO.getMaxFeePerGas()
+            );
+        } else {
+            // 构造 Legacy 交易
+            return RawTransaction.createTransaction(
+                    transactionDTO.getNonce(),
+                    transactionDTO.getGasPrice(),
+                    transactionDTO.getGasLimit(),
+                    transactionDTO.getTo(),
+                    transactionDTO.getValue(),
+                    transactionDTO.getData()
+            );
+        }
+    }
 
 }

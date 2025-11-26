@@ -68,6 +68,8 @@ public class TicketDubboServiceImpl implements TicketDubboService {
         ticket.setAirdropName(airdrop.getName());
         ticket.setApplyTime(new Date());
         ticket.setStatus(TicketStatus.PENDING);
+        ticket.setIsRequireContractCheck(true);
+        ticket.setIsRequireContractFunctionCheck(true);
 
         ticketService.insert(ticket);
         return RpcResult.success(CreateTicketResponse.create(request.getTicketNo(), ticket.getId()));

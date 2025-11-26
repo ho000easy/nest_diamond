@@ -1,0 +1,10 @@
+/* 文本截断通用样式 */
+.dt-text-truncate {
+    max-width: 150px;       /* ⚠️ 根据列宽需求调整这个数值 */
+    white-space: nowrap;    /* 禁止换行 */
+    overflow: hidden;       /* 隐藏溢出内容 */
+    text-overflow: ellipsis;/* 显示省略号 (...) */
+    cursor: pointer;        /* 鼠标放上去显示手型，提示可交互 */
+    display: inline-block;  /* 确保 width 生效 */
+    vertical-align: middle;
+}

@@ -68,6 +68,8 @@
                     <th>生效时间</th>
                     <th>是否允许转账</th>
                     <th>是否允许部署合约</th>
+                    <th>是否检查合约</th>
+                    <th>是否检查合约函数</th>
                     <th>状态</th>
                     <th>申请人</th>
                     <th>申请时间</th>
@@ -121,6 +123,57 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade " id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content  ">
+            <div class="modal-header ">
+                <h5 class="modal-title">编辑</h5>
+            </div>
+
+            <div class="modal-body" style="font-size:xx-small">
+                <form id="editForm">
+                    <div class="row">
+                        <div class="col-6 mt-4 prototype">
+                            <div class="input-group">
+                                <span class="input-group-text">ID</span>
+                                <input name="id" class="form-control" readonly
+                                       aria-label="start"
+                                       aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">是否检查合约</span>
+                                <select name="isRequireContractCheck" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="是" text="是" value="true" selected>是</option>
+                                    <option data-tokens="否" text="否" value="false">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text">是否检查函数</span>
+                                <select name="isRequireContractFunctionCheck" class="selectpicker form-control"
+                                        data-live-search="true">
+                                    <option data-tokens="是" text="是" value="true" selected>是</option>
+                                    <option data-tokens="否" text="否" value="false">否</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <div class="input-group">
+                        <button type="button" class="btn btn-primary m-2" id="update">更新</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>

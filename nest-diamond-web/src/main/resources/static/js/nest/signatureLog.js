@@ -4,12 +4,34 @@ $(document).ready(function () {
 
     let columns = [
         'id', 'ticketNo', 'airdropOperationName', 'signAddress', 'bizOrderNo', 'rawData', 'signedData',
-        'contractAddress', 'chainName',
+        'contractName', 'chainName',
         'signType', 'signTime', 'createTime'
     ];
+    let columnDef = [
+        {
+            targets: 5, // 假设是第4列
+            render: function (data, type, row) {
+                return DtRenderUtil.renderCode(data, type, { isJson: true });
+            }
+        },
+        {
+            targets: 6, // 假设是第4列
+            render: function (data, type, row) {
+                const safeData = String(data).replace(/"/g, '&quot;');
+                return `
+                <span class="dt-text-truncate" 
+                      data-bs-toggle="tooltip" 
+                      data-bs-placement="top" 
+                      title="${safeData}">
+                    ${data}
+                </span>
+                `
+            }
+        }
+    ]
 
     let signatureLogListTable = multiSelectDataTable('signatureLogList', '/signatureLog/search',
-        columns, params, null, null);
+        columns, params, null, columnDef);
 
     function params() {
         return $("#addForm").serialize();

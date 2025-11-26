@@ -1,6 +1,11 @@
-// static/js/nest/ticket.js
 $(document).ready(function () {
     let columnDefs = [
+        {
+            targets: 1,
+            render: function (data, type, full, meta) {
+                return editColumn(data)
+            }
+        },
         {
             targets: 4,
             className: 'seq-col', // 让这一列可以换行
@@ -20,7 +25,7 @@ $(document).ready(function () {
             }
         },
         {
-            targets: 8,  // 状态列索引
+            targets: 10,  // 状态列索引
             className: 'text-center',
             render: function (data, type, row) {
                 let badge = '';
@@ -41,16 +46,21 @@ $(document).ready(function () {
             }
         },
         {
-            targets: 13,
+            targets: 15,
             className: 'text-center',
             render: function (data, type, row) {
-                return `<a href="/contractInstanceSnapshot?ticketNo=${row.ticketNo}"  target="_blank" className="link-primary">合约实例快照</a>`
+                return `
+            <div class="d-flex flex-column align-items-center gap-1">
+                <a href="/contractInstanceSnapshot?ticketNo=${row.ticketNo}" target="_blank" class="link-primary">合约快照</a>
+                <a href="/signatureLog?ticketNo=${row.ticketNo}" target="_blank" class="link-primary">签名记录</a>
+            </div>
+        `;
             }
         }
     ]
     let table = multiSelectDataTable('ticketTable', '/ticket/search',
         ['id', 'ticketNo', 'name', 'airdropOperationName', 'airdropName',
-            null, 'isAllowTransfer', 'isAllowDeployContract', 'status', 'applicant', 'applyTime', 'createTime', 'modifyTime', null],
+            null, 'isAllowTransfer', 'isAllowDeployContract', 'isRequireContractCheck', 'isRequireContractFunctionCheck', 'status', 'applicant', 'applyTime', 'createTime', 'modifyTime', null],
         params, null, columnDefs);
 
     function params() {
@@ -64,6 +74,20 @@ $(document).ready(function () {
         let airdropId = table.row($(this).closest('tr')).data().airdropId
         window.open(`airdropItem?airdropId=${airdropId}`);
     });
+
+    $('#ticketTable tbody').on('click', 'td img.edit', function () {
+        let rowData = table.row($(this).closest('tr')).data()
+        showEditModal($("#editModal"), 'editForm', rowData)
+    });
+
+    $('#update').click(function () {
+        postForm('/ticket/update', $("#editForm").serialize(), function (resp) {
+            processResp(resp, '更新成功', function () {
+                table.ajax.reload(null, false);
+            })
+        })
+
+    })
 
     $("#saveBtn").click(function () {
         postForm('/ticket/create', $("#createForm").serialize(), function (resp) {

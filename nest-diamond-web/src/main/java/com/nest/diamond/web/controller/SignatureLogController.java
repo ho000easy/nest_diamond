@@ -25,11 +25,12 @@ public class SignatureLogController {
     private SignatureLogService signatureLogService;
 
     @GetMapping
-    public ModelAndView signatureLog() {
+    public ModelAndView signatureLog(String ticketNo) {
         ModelAndView modelAndView = new ModelAndView("signatureLog");
 
         modelAndView.addObject("chainList", blockchainService.allChains());
         modelAndView.addObject("signTypeList", Arrays.asList(SignType.values()));
+        modelAndView.addObject("ticketNo", ticketNo);
         return modelAndView;
     }
 
