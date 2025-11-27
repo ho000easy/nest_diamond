@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class CreateTicketRequest extends BaseDTO {
+public class CreateSignTicketRequest extends BaseDTO {
 
     @NotBlank(message = "工单名称不能为空")
     private String name;

@@ -105,6 +105,12 @@ public class TicketService {
         Assert.notNull(airdropItem, "空投项目下没有此地址对应的条目");
 
         // 3. 工单状态校验
+        validateTicket(ticket);
+        return ticket;
+    }
+
+    public void validateTicket(Ticket ticket) {
+        // 3. 工单状态校验
         if (ticket.getStatus() == TicketStatus.PENDING) {
             throw new RuntimeException("工单还在审批中");
         }
@@ -118,8 +124,6 @@ public class TicketService {
         if(currentDate.after(ticket.getEndTime())){
             throw new RuntimeException("工单已经截至时间");
         }
-
-        return ticket;
     }
 
 

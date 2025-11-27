@@ -2,6 +2,7 @@ package com.nest.diamond.model.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.nest.diamond.common.enums.TicketStatus;
+import com.nest.diamond.common.enums.TicketType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +21,7 @@ public class Ticket {
 
     /** 工单编号（唯一） */
     private String ticketNo;
+    private TicketType type;
 
     private Long airdropOperationId;
     private String airdropOperationName;

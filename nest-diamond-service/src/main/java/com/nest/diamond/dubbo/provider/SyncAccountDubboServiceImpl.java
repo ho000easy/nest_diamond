@@ -2,21 +2,31 @@ package com.nest.diamond.dubbo.provider;
 
 import com.google.common.collect.Maps;
 import com.nest.diamond.common.enums.AccountType;
+import com.nest.diamond.common.enums.TicketTokenStatusEnum;
 import com.nest.diamond.common.enums.WalletVendor;
 import com.nest.diamond.dubbo.api.SyncAccountDubboService;
 import com.nest.diamond.dubbo.dto.RpcResult;
 import com.nest.diamond.dubbo.dto.sync.AccountRef;
-import com.nest.diamond.dubbo.dto.sync.SyncAccountRequest;
+import com.nest.diamond.dubbo.dto.sync.SyncDiamondAccountsToLocalRequest;
+import com.nest.diamond.dubbo.dto.sync.SyncDiamondAccountsToLocalResponse;
+import com.nest.diamond.dubbo.dto.sync.SyncLocalAccountsToDiamondRequest;
 import com.nest.diamond.model.domain.Account;
 import com.nest.diamond.model.domain.Seed;
-import com.nest.diamond.service.AccountService;
-import com.nest.diamond.service.SeedService;
+import com.nest.diamond.model.domain.Ticket;
+import com.nest.diamond.model.domain.TicketToken;
+import com.nest.diamond.model.domain.query.AirdropItemQuery;
+import com.nest.diamond.service.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,11 +37,17 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
     private AccountService accountService;
     @Autowired
     private SeedService seedService;
+    @Autowired
+    private TicketService ticketService;
+    @Autowired
+    private TicketTokenService ticketTokenService;
+    @Autowired
+    private AirdropItemService airdropItemService;
 
     @Transactional
     @Override
-    public RpcResult<Void> syncAccount(SyncAccountRequest syncAccountRequest) {
-        List<AccountRef> accountRefList = syncAccountRequest.getAccounts();
+    public RpcResult<Void> syncLocalAccountsToDiamond(SyncLocalAccountsToDiamondRequest syncLocalAccountsToDiamondRequest) {
+        List<AccountRef> accountRefList = syncLocalAccountsToDiamondRequest.getAccounts();
         List<String> toBeSyncedAccountAddress = accountRefList.stream().map(AccountRef::getAddress).toList();
         List<Account> accountList = accountService.findByAddresses(toBeSyncedAccountAddress);
         Map<String, Account> accountMap = Maps.uniqueIndex(accountList, Account::getAddress);
@@ -41,6 +57,7 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
 
         List<String> seedPrefixList = filteredAccountRefList.stream().map(AccountRef::getSeedPrefix).distinct().toList();
         seedPrefixList.forEach(seedPrefix -> {
+            Assert.isTrue(StringUtils.isNotEmpty(seedPrefix), "seed prefix不能为空");
             Seed seed = seedService.findBySeedPrefix(seedPrefix);
             if(seed == null){
                 seedService.createSeed(seedPrefix);
@@ -62,5 +79,31 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
         }).toList();
         accountService.batchInsert(toBeInsertedAccountList);
         return RpcResult.success();
+    }
+
+    @Override
+    public RpcResult<SyncDiamondAccountsToLocalResponse> syncDiamondAccountsToLocal(SyncDiamondAccountsToLocalRequest syncDiamondAccountsToLocalRequest) {
+        Ticket ticket = ticketService.findByTicketNo(syncDiamondAccountsToLocalRequest.getTicketNo());
+        ticketService.validateTicket(ticket);
+        TicketToken ticketToken = ticketTokenService.findByTicketNoAndToken(ticket.getTicketNo(), syncDiamondAccountsToLocalRequest.getAuthToken());
+        Assert.notNull(ticketToken, "工单对应的authToken不存在");
+        if(ticketToken.getStatus() == TicketTokenStatusEnum.EXPIRED){
+            throw new RuntimeException("token已经失效");
+        }
+        if(ticketToken.getStatus() == TicketTokenStatusEnum.USED){
+            throw new RuntimeException("token已经被使用");
+        }
+        if(new Date().after(ticketToken.getExpireTime())){
+            throw new RuntimeException("token已经过期");
+        }
+        AirdropItemQuery airdropItemQuery = new AirdropItemQuery();
+        airdropItemQuery.setAirdropId(ticket.getAirdropId());
+        List<Account> accountList = airdropItemService.searchAccount(airdropItemQuery);
+        List<AccountRef> accountRefList = accountList.stream().map(account -> {
+           AccountRef accountRef = new AccountRef();
+           BeanUtils.copyProperties(account, accountRef);
+           return accountRef;
+        }).toList();
+        return RpcResult.success(new SyncDiamondAccountsToLocalResponse(accountRefList));
     }
 }

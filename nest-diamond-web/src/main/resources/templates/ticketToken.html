@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<script src="/js/nest/ticketToken.js"></script>
+
+<body>
+
+<div class="container">
+
+    <form id="searchForm">
+        <div class="row">
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">工单编号</span>
+                    <input name="ticketNo" class="form-control" placeholder="精确匹配" th:value="${ticketNo}">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">Token</span>
+                    <input name="token" class="form-control" placeholder="Token值">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">状态</span>
+                    <select name="status" class="selectpicker form-control" data-live-search="true">
+                        <option value="">全部</option>
+                        <th:block th:each="item : ${statusList}">
+                            <option th:value="${item.name()}" th:text="${item.desc}"></option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-3 mt-3">
+                <div class="input-group">
+                    <button type="button" class="btn btn-primary m-2" id="searchBtn">
+                        查询
+                    </button>
+<!--                    <button type="button" class="btn btn-primary m-2" id="createBtn">-->
+<!--                        <i class="bi bi-plus-lg"></i> 生成-->
+<!--                    </button>-->
+                    <button type="button" class="btn btn-danger m-2" id="deleteBtn">
+                        删除
+                    </button>
+                    <button type="button" class="btn btn-outline-danger m-2" id="invalidateBtn">
+                        作废
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-12">
+            <table id="tokenTable" class="stripe table table-hover" style="font-size: 12px; width: 100%">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" name="select_all" value="1" class="example-select-all"></th>
+                    <th>ID</th>
+                    <th>工单编号</th>
+                    <th>Token</th>
+                    <th>状态</th>
+                    <th>过期时间</th>
+                    <th>使用时间</th>
+                    <th>创建时间</th>
+                    <th>修改时间</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">生成一次性 Token</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createForm">
+                    <div class="mb-3">
+                        <label class="form-label">工单ID</label>
+                        <input type="number" class="form-control" name="ticketId" required placeholder="关联的 Ticket ID">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">有效期</label>
+                        <select name="validSeconds" class="selectpicker form-control">
+                            <option value="300">5 分钟</option>
+                            <option value="3600">1 小时</option>
+                            <option value="86400" selected>24 小时</option>
+                            <option value="604800">7 天</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="confirmGenerateBtn">生成</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
