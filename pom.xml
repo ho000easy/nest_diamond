@@ -168,7 +168,26 @@
                 <artifactId>commons-beanutils</artifactId>
                 <version>1.9.3</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-test</artifactId>
+                <version>5.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>5.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>5.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-x-discovery</artifactId>
+                <version>5.6.0</version>
+            </dependency>
             <!-- 已删除的高危/无用依赖：
                  fastjson 1.2.58（严重漏洞）、hibernate-validator 5.x（SB3 自带8.x）、
                  springfox-swagger2（已废弃）、commons-beanutils（性能差） -->
