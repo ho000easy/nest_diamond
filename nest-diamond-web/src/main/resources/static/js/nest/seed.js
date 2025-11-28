@@ -47,11 +47,14 @@ $(document).ready(function () {
         if (!checkSelectedIds(seedListTable)) {
             return;
         }
-        postJson('/seed/delete', JSON.stringify(getSelectedIds(seedListTable)), function (resp) {
-            processResp(resp, '删除成功', function () {
-                seedListTable.ajax.reload(null, false);
+
+        confirmDangerDelete('危险操作：将删除种子下的所有账户，且不可恢复！\n请在输入框中输入 DELETE 以确认。', function () {
+            postJson('/seed/delete', JSON.stringify(getSelectedIds(seedListTable)), function (resp) {
+                processResp(resp, '删除成功', function () {
+                    seedListTable.ajax.reload(null, false);
+                })
             })
-        })
+        });
     })
 
 })

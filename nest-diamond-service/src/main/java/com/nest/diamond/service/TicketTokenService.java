@@ -1,5 +1,6 @@
 package com.nest.diamond.service;
 
+import com.google.common.collect.Lists;
 import com.nest.diamond.common.enums.TicketTokenStatusEnum;
 import com.nest.diamond.iservice.TicketTokenIService;
 import com.nest.diamond.model.domain.Ticket;
@@ -47,6 +48,23 @@ public class TicketTokenService {
         // 3. 存入数据库
         ticketTokenIService.save(ticketToken);
         return ticketToken;
+    }
+
+    public void checkTicketToken(TicketToken ticketToken){
+        Assert.notNull(ticketToken, "工单对应的authToken不存在");
+        if(ticketToken.getStatus() == TicketTokenStatusEnum.EXPIRED){
+            throw new RuntimeException("token已经失效");
+        }
+        if(ticketToken.getStatus() == TicketTokenStatusEnum.USED){
+            throw new RuntimeException("token已经被使用");
+        }
+        if(new Date().after(ticketToken.getExpireTime())){
+            throw new RuntimeException("token已经过期");
+        }
+    }
+
+    public void invalidate(Long id) {
+        invalidate(Lists.newArrayList(id));
     }
 
     public void invalidate(List<Long> ids){

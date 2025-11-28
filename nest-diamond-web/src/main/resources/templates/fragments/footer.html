@@ -6,6 +6,68 @@
 <body>
 
 <footer class="blog-footer" data-th-fragment="footer">
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle">操作确认</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmModalBody">
+                    确认要执行该操作吗？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cancel" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="confirmModalOkBtn">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 删除确认弹窗 -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalTitle">删除确认</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- 提示文案 -->
+                    <p id="deleteConfirmModalMessage" class="mb-3">
+                        确认要删除该数据吗？
+                    </p>
+
+                    <!-- 需要输入确认文本的区域（模式二时显示） -->
+                    <div id="deleteConfirmInputWrapper" class="mt-2 d-none">
+                        <div class="input-group">
+                            <span class="input-group-text" id="deleteConfirmInputLabel">确认文本</span>
+                            <input type="text"
+                                   class="form-control"
+                                   id="deleteConfirmInput"
+                                   placeholder="">
+                        </div>
+                        <small class="text-muted" id="deleteConfirmHint">
+                            为确认删除，请在上方输入指定文本。
+                        </small>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        取消
+                    </button>
+                    <button type="button"
+                            class="btn btn-danger"
+                            id="deleteConfirmModalOkBtn">
+                        删除
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </footer>
 </body>
 </html>

@@ -16,6 +16,7 @@ import com.nest.diamond.model.domain.Ticket;
 import com.nest.diamond.model.domain.TicketToken;
 import com.nest.diamond.model.domain.query.AirdropItemQuery;
 import com.nest.diamond.service.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -30,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @DubboService
 public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
@@ -47,6 +49,7 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
     @Transactional
     @Override
     public RpcResult<Void> syncLocalAccountsToDiamond(SyncLocalAccountsToDiamondRequest syncLocalAccountsToDiamondRequest) {
+        log.info("同步账户数据开始");
         List<AccountRef> accountRefList = syncLocalAccountsToDiamondRequest.getAccounts();
         List<String> toBeSyncedAccountAddress = accountRefList.stream().map(AccountRef::getAddress).toList();
         List<Account> accountList = accountService.findByAddresses(toBeSyncedAccountAddress);
@@ -54,7 +57,9 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
         List<AccountRef> filteredAccountRefList = accountRefList.stream().filter(accountRef -> {
             return !accountMap.containsKey(accountRef.getAddress());
         }).toList();
-
+        if(filteredAccountRefList.isEmpty()){
+            return RpcResult.fail("已经同步过");
+        }
         List<String> seedPrefixList = filteredAccountRefList.stream().map(AccountRef::getSeedPrefix).distinct().toList();
         seedPrefixList.forEach(seedPrefix -> {
             Assert.isTrue(StringUtils.isNotEmpty(seedPrefix), "seed prefix不能为空");
@@ -78,6 +83,8 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
             return account;
         }).toList();
         accountService.batchInsert(toBeInsertedAccountList);
+        log.info("同步账户数据结束");
+
         return RpcResult.success();
     }
 
@@ -86,16 +93,8 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
         Ticket ticket = ticketService.findByTicketNo(syncDiamondAccountsToLocalRequest.getTicketNo());
         ticketService.validateTicket(ticket);
         TicketToken ticketToken = ticketTokenService.findByTicketNoAndToken(ticket.getTicketNo(), syncDiamondAccountsToLocalRequest.getAuthToken());
-        Assert.notNull(ticketToken, "工单对应的authToken不存在");
-        if(ticketToken.getStatus() == TicketTokenStatusEnum.EXPIRED){
-            throw new RuntimeException("token已经失效");
-        }
-        if(ticketToken.getStatus() == TicketTokenStatusEnum.USED){
-            throw new RuntimeException("token已经被使用");
-        }
-        if(new Date().after(ticketToken.getExpireTime())){
-            throw new RuntimeException("token已经过期");
-        }
+        ticketTokenService.checkTicketToken(ticketToken);
+        ticketTokenService.invalidate(ticketToken.getId());
         AirdropItemQuery airdropItemQuery = new AirdropItemQuery();
         airdropItemQuery.setAirdropId(ticket.getAirdropId());
         List<Account> accountList = airdropItemService.searchAccount(airdropItemQuery);

@@ -75,9 +75,7 @@ $(document).ready(function () {
     });
 
     $("#deleteBtn").click(function () {
-        postJson('/ticketToken/delete', tokenTable, function (resp) {
-            processResp(resp, '删除成功', () => tokenTable.ajax.reload(null, false));
-        })
+        postSelectedIds('/ticketToken/delete', '删除成功', tokenTable)
     });
 
 

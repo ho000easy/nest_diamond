@@ -69,6 +69,7 @@ public class TicketDubboServiceImpl implements TicketDubboService {
         return RpcResult.success(CreateSignTicketResponse.create(request.getTicketNo(), ticket.getId()));
     }
 
+    @Transactional
     @Override
     public RpcResult<CreateSyncTicketResponse> createSyncTicket(CreateSyncTicketRequest request) {
         Assert.isTrue(request.getStartTime().before(request.getEndTime()), "工单开始时间必须小于结束时间");

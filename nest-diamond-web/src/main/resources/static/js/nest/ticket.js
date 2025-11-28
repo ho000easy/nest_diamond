@@ -49,12 +49,17 @@ $(document).ready(function () {
             targets: 15,
             className: 'text-center',
             render: function (data, type, row) {
+                let _buttons = `<a href="/contractInstanceSnapshot?ticketNo=${row.ticketNo}" target="_blank" class="link-primary">合约快照</a>
+                        <a href="/signatureLog?ticketNo=${row.ticketNo}" target="_blank" class="link-primary">签名记录</a>`
+
+                if(row.type == 'ACCOUNT_SYNC'){
+                    _buttons += `<a href="/ticketToken?ticketNo=${row.ticketNo}" target="_blank" class="link-primary">token记录</a>`
+                }
                 return `
-            <div class="d-flex flex-column align-items-center gap-1">
-                <a href="/contractInstanceSnapshot?ticketNo=${row.ticketNo}" target="_blank" class="link-primary">合约快照</a>
-                <a href="/signatureLog?ticketNo=${row.ticketNo}" target="_blank" class="link-primary">签名记录</a>
-            </div>
-        `;
+                    <div class="d-flex flex-column align-items-center gap-1 no-wrap">
+                        ${_buttons}
+                    </div>
+                `;
             }
         }
     ]
@@ -118,11 +123,14 @@ $(document).ready(function () {
         if (!checkSelectedIds(table)) {
             return;
         }
-        postJson('/ticket/delete', JSON.stringify(getSelectedIds(table)), function (resp) {
-            processResp(resp, '删除成功', function () {
-                table.ajax.reload(null, false);
+
+        confirmDelete('确认删除选中的工单吗？', function () {
+            postJson('/ticket/delete', JSON.stringify(getSelectedIds(table)), function (resp) {
+                processResp(resp, '删除成功', function () {
+                    table.ajax.reload(null, false);
+                })
             })
-        })
+        });
 
     })
 });
