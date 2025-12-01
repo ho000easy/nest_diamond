@@ -42,6 +42,10 @@ public class AirdropItemController {
     public DataTableVO<AirdropItemExtend> search(AirdropItemQuery airdropItemQuery) {
 
         List<AirdropItemExtend> airdropItemExtendList = airdropItemService.search(airdropItemQuery);
+        airdropItemExtendList.forEach(airdropItemExtend -> {
+            airdropItemExtend.setPrivateKey(null);
+            airdropItemExtend.setSeed(null);
+        });
 
         return DataTableVO.create(airdropItemExtendList);
     }

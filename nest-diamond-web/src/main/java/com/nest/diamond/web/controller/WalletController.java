@@ -1,14 +1,14 @@
 package com.nest.diamond.web.controller;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.nest.diamond.model.bo.AirdropItemExtend;
+import com.nest.diamond.model.domain.Account;
 import com.nest.diamond.model.vo.IndexValue;
 import com.nest.diamond.model.vo.WalletReq;
+import com.nest.diamond.service.AccountService;
 import com.nest.diamond.service.AirdropService;
 import com.nest.diamond.web.anno.UnLock;
 import com.nest.diamond.web.vo.DataTableVO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RequestMapping("")
 @Controller
@@ -25,11 +26,12 @@ public class WalletController {
 
     @Autowired
     private AirdropService airdropService;
+    @Autowired
+    private AccountService accountService;
 
     @RequestMapping("/wallet")
     public ModelAndView wallet() {
         ModelAndView modelAndView = new ModelAndView("wallet");
-//        modelAndView.addObject("seedList", seedService.allSeeds());
         modelAndView.addObject("airdropList", airdropService.allAirdrops());
         return modelAndView;
     }
@@ -39,58 +41,47 @@ public class WalletController {
     @ResponseBody
     public DataTableVO<IndexValue> list(WalletReq walletReq) {
 
-        List<AirdropItemExtend> airdropItemExtendList = airdropService.findAirdropItemExtendByAirdropId(walletReq.getAirdropId(), walletReq.getStartSequence(), walletReq.getEndSequence(), walletReq.getSequenceList());
-        Assert.isTrue(airdropItemExtendList.size() <= 5, "单次导出不能大于5个");
-
-        List<IndexValue> indexValueList = Lists.newArrayList();
-        for (AirdropItemExtend airdropItemExtend : airdropItemExtendList) {
-            String value = walletReq.getIsShowSeed() ? airdropItemExtend.getSeed() : airdropItemExtend.getPrivateKey();
-            indexValueList.add(new IndexValue(airdropItemExtend.getSequence(), value));
-        }
-        return DataTableVO.create(indexValueList);
+        return DataTableVO.create(buildIndexValue(walletReq, account ->
+                walletReq.getIsShowSeed() ? account.getSeed() : account.getPrivateKey()));
     }
 
     @UnLock
     @RequestMapping("/wallet/split1")
     @ResponseBody
     public DataTableVO<IndexValue> split1(WalletReq walletReq) {
-        List<AirdropItemExtend> airdropItemExtendList = airdropService.findAirdropItemExtendByAirdropId(walletReq.getAirdropId(), walletReq.getStartSequence(), walletReq.getEndSequence(), walletReq.getSequenceList());
-        Assert.isTrue(airdropItemExtendList.size() <= 5, "单次导出不能大于5个");
-        List<IndexValue> indexValueList = Lists.newArrayList();
-        for (AirdropItemExtend airdropItemExtend : airdropItemExtendList) {
-            String value = walletReq.getIsShowSeed() ? splitSeed(airdropItemExtend.getSeed())[0] : airdropItemExtend.getPrivateKey().substring(0, 35);
-
-            indexValueList.add(new IndexValue(airdropItemExtend.getSequence(), value));
-        }
-        return DataTableVO.create(indexValueList);
-
+        return DataTableVO.create(buildIndexValue(walletReq, account ->
+                walletReq.getIsShowSeed() ? splitSeed(account.getSeed())[0] : account.getPrivateKey().substring(0, 35)));
     }
 
     @UnLock
     @RequestMapping("/wallet/split2")
     @ResponseBody
     public DataTableVO<IndexValue> split2(WalletReq walletReq) {
-        List<AirdropItemExtend> airdropItemExtendList = airdropService.findAirdropItemExtendByAirdropId(walletReq.getAirdropId(), walletReq.getStartSequence(), walletReq.getEndSequence(), walletReq.getSequenceList());
-        Assert.isTrue(airdropItemExtendList.size() <= 5, "单次导出不能大于5个");
-
-        List<IndexValue> indexValueList = Lists.newArrayList();
-        for (AirdropItemExtend airdropItemExtend : airdropItemExtendList) {
-            String value = walletReq.getIsShowSeed() ? splitSeed(airdropItemExtend.getSeed())[1] : airdropItemExtend.getPrivateKey().substring(35);
-            indexValueList.add(new IndexValue(airdropItemExtend.getSequence(), value));
-        }
-        return DataTableVO.create(indexValueList);
+        return DataTableVO.create(buildIndexValue(walletReq, account ->
+                walletReq.getIsShowSeed() ?
+                        splitSeed(account.getSeed())[1]
+                        : account.getPrivateKey().substring(35)));
 
     }
 
     @RequestMapping("/wallet/addressList")
     @ResponseBody
     public DataTableVO<IndexValue> addressList(WalletReq walletReq) {
+        return DataTableVO.create(buildIndexValue(walletReq, Account::getAddress));
+    }
+
+    private List<IndexValue> buildIndexValue(WalletReq walletReq, Function<Account, String> appliedFunction) {
         List<AirdropItemExtend> airdropItemExtendList = airdropService.findAirdropItemExtendByAirdropId(walletReq.getAirdropId(), walletReq.getStartSequence(), walletReq.getEndSequence(), walletReq.getSequenceList());
-        List<IndexValue> indexValueList = Lists.newArrayList();
-        for (AirdropItemExtend airdropItemExtend : airdropItemExtendList) {
-            indexValueList.add(new IndexValue(airdropItemExtend.getSequence(), airdropItemExtend.getAccountAddress()));
-        }
-        return DataTableVO.create(indexValueList);
+        Map<String, AirdropItemExtend> airdropItemExtendMap = Maps.uniqueIndex(airdropItemExtendList, AirdropItemExtend::getAccountAddress);
+        List<String> addressList = airdropItemExtendList.stream().map(AirdropItemExtend::getAccountAddress).toList();
+        List<Account> accountList = accountService.findByAddresses(addressList);
+
+        List<IndexValue> indexValueList = accountList.stream().map(account -> {
+            AirdropItemExtend airdropItemExtend = airdropItemExtendMap.get(account.getAddress());
+            return new IndexValue(airdropItemExtend.getSequence(), appliedFunction.apply(account));
+        }).collect(Collectors.toList());
+        Collections.sort(indexValueList, Comparator.comparing(IndexValue::getIndex));
+        return indexValueList;
     }
 
     public static String[] splitSeed(String seed) {
@@ -110,12 +101,6 @@ public class WalletController {
         return new String[]{part1, part2};
     }
 
-    @Data
-    @AllArgsConstructor
-    public class WalletResp {
-        private List<IndexValue> addressRespList;
-        private List<IndexValue> privateKeyRespList;
-    }
 
 
 }

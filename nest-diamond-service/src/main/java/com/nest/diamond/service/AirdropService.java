@@ -59,12 +59,6 @@ public class AirdropService {
         return accountList.isEmpty() ? null : accountList.get(0);
     }
 
-    public List<String> findPrivateKeyByAirdropId(Long id, Integer startSequence, Integer endSequence, List<Integer> sequenceList){
-        List<AirdropItemExtend> airdropItemExtends = findAirdropItemExtendByAirdropId(id, startSequence, endSequence, sequenceList);
-
-        return airdropItemExtends.stream().map(AirdropItemExtend::getPrivateKey).collect(Collectors.toList());
-    }
-
     public List<String> findAddressByAirdropId(Long id, Integer startSequence, Integer endSequence) {
         return findAddressByAirdropId(id, startSequence, endSequence, null);
     }
@@ -72,22 +66,6 @@ public class AirdropService {
     public List<String> findAddressByAirdropId(Long id, Integer startSequence, Integer endSequence, List<Integer> sequenceList){
         List<AirdropItemExtend> airdropItemExtends = findAirdropItemExtendByAirdropId(id, startSequence, endSequence, sequenceList);
         return airdropItemExtends.stream().map(AirdropItemExtend::getAccountAddress).collect(Collectors.toList());
-    }
-
-    public List<AirdropItemExtend> findBy(Long id, List<Integer> sequenceList){
-        AirdropItemQuery airdropItemQuery = new AirdropItemQuery();
-        airdropItemQuery.setAirdropId(id);
-        airdropItemQuery.setSequenceList(sequenceList);
-        return airdropItemService.search(airdropItemQuery);
-    }
-
-    public List<AirdropItemExtend> findAirdropItemExtendByAirdropId(Long id, Integer startSequence, Integer endSequence){
-        AirdropItemQuery airdropItemQuery = new AirdropItemQuery();
-        airdropItemQuery.setAirdropId(id);
-        airdropItemQuery.setStartSequence(startSequence);
-        airdropItemQuery.setEndSequence(endSequence);
-
-        return airdropItemService.search(airdropItemQuery);
     }
 
     public List<AirdropItemExtend> findAirdropItemExtendByAirdropId(Long id, Integer startSequence, Integer endSequence, List<Integer> sequenceList){

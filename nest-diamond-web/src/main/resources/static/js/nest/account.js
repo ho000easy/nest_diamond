@@ -3,7 +3,7 @@ $(document).ready(function () {
     exchangeSelected();
     $('#exchangeId').change(exchangeSelected)
     let accountListTable = multiSelectDataTable('accountList', '/account/search',
-        ['id', 'seedPrefix', 'address', 'hdIndex',
+        ['id', 'seedPrefix', 'address', 'type', 'hdIndex',
             'createTime', 'modifyTime'], accountParams)
 
     function accountParams() {
