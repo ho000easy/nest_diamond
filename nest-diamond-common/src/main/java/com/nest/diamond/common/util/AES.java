@@ -2,10 +2,14 @@ package com.nest.diamond.common.util;
 
 import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 
 public class AES {
     private static String charset = "utf-8";
@@ -13,6 +17,40 @@ public class AES {
     private static int offset = 16;
     private static String transformation = "AES/CBC/PKCS5Padding";
     private static String algorithm = "AES";
+
+
+    public static String encryptWithPassword(String content, String password) {
+        try {
+            if (content == null) return null;
+
+            // 1. 生成密钥：依然使用 MD5(password) 得到 16字节密钥
+            byte[] rawKey = DigestUtils.md5(password);
+            SecretKeySpec skeySpec = new SecretKeySpec(rawKey, "AES");
+
+            // 2. 生成随机 IV (16字节)
+            byte[] iv = new byte[16];
+            new SecureRandom().nextBytes(iv);
+            IvParameterSpec ivSpec = new IvParameterSpec(iv);
+
+            // 3. 初始化 Cipher
+            Cipher cipher = Cipher.getInstance(transformation);
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, ivSpec);
+
+            // 4. 执行加密
+            byte[] encryptedBytes = cipher.doFinal(content.getBytes(StandardCharsets.UTF_8));
+
+            // 5. 拼接 IV 和 密文 (IV在前，密文在后)
+            ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encryptedBytes.length);
+            byteBuffer.put(iv);
+            byteBuffer.put(encryptedBytes);
+
+            // 6. 转 Base64
+            return new Base64().encodeToString(byteBuffer.array());
+
+        } catch (Exception e) {
+            throw new RuntimeException("加密失败", e);
+        }
+    }
     /**
      * 加密
      *

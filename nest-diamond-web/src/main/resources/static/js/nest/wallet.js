@@ -48,20 +48,28 @@ $(document).ready(function () {
     function fetchAndProcess(isSeed, isSplit) {
         isShowSeed = isSeed;
 
-        // 1. 请求后端获取完整数据
+        // 获取当前输入的密码
+        let currentPassword = $('#unlockPassword').val();
+
+        // 1. 请求后端获取完整数据 (数据此时是加密的)
         postForm('wallet/list', seedParams(), function (resp) {
-            if (resp.isSuccess === false) { // 假设后端错误返回结构
+            if (resp.isSuccess === false) {
                 $.toast(failToast(resp.message, 30000))
                 return;
             }
 
-            let dataList = resp.data || []; // 假设返回结构是 { data: [{index:1, value:'...'}, ...] }
+            let dataList = resp.data || [];
+
+            // === 关键修改：在这里统一解密 ===
+            dataList.forEach(item => {
+                // 将后端返回的密文解密回明文
+                item.value = decrypt(item.value, currentPassword);
+            });
+            // ============================
 
             if (!isSplit) {
                 // === 模式A：生成完整列表 ===
-                // 填充表格
                 privateKeyTable.clear().rows.add(dataList).draw();
-                // 填充文本域
                 fillTextAreaFromData(dataList, 'privateKeyText');
 
             } else {
@@ -71,6 +79,7 @@ $(document).ready(function () {
 
                 dataList.forEach(item => {
                     let parts;
+                    // 注意：此时 item.value 已经是解密后的明文了，可以直接 split
                     if (isSeed) {
                         parts = splitSeedStr(item.value);
                     } else {
@@ -81,11 +90,9 @@ $(document).ready(function () {
                     list2.push({ index: item.index, value: parts[1] });
                 });
 
-                // 填充两个表格
                 privateKeySplit1Table.clear().rows.add(list1).draw();
                 privateKeySplit2Table.clear().rows.add(list2).draw();
 
-                // 填充两个文本域
                 fillTextAreaFromData(list1, 'privateKey1Text');
                 fillTextAreaFromData(list2, 'privateKey2Text');
             }
@@ -170,5 +177,44 @@ $(document).ready(function () {
                 $(`#${id}`).text(browserList.substring(2))
             }
         })
+    }
+
+    function decrypt(encryptedBase64, password) {
+        try {
+            if (!encryptedBase64) return "";
+
+            // 1. 生成 Key (保持与 Java 一致的 MD5)
+            var key = CryptoJS.MD5(password);
+
+            // 2. 将 Base64 解码为 WordArray
+            var rawData = CryptoJS.enc.Base64.parse(encryptedBase64);
+
+            // 3. 提取 IV (前 16 字节 = 4 个 Word)
+            // copy 出来做 IV
+            var iv = CryptoJS.lib.WordArray.create(rawData.words.slice(0, 4));
+
+            // 4. 提取密文 (去掉前 16 字节)
+            // 移除前4个word (16字节)
+            rawData.words.splice(0, 4);
+            // 修正长度 (sigBytes 是字节长度，减去16)
+            rawData.sigBytes -= 16;
+
+            // 5. 解密 (注意这里第一个参数直接传处理过的 rawData 作为密文)
+            var decrypted = CryptoJS.AES.decrypt(
+                { ciphertext: rawData },
+                key,
+                {
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                }
+            );
+
+            // 6. 转为 UTF8 字符串
+            return decrypted.toString(CryptoJS.enc.Utf8);
+        } catch (e) {
+            console.error("解密失败", e);
+            return "解密失败";
+        }
     }
 })

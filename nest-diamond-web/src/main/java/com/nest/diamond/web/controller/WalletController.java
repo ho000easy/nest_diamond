@@ -1,6 +1,7 @@
 package com.nest.diamond.web.controller;
 
 import com.google.common.collect.Maps;
+import com.nest.diamond.common.util.AES;
 import com.nest.diamond.model.bo.AirdropItemExtend;
 import com.nest.diamond.model.domain.Account;
 import com.nest.diamond.model.vo.IndexValue;
@@ -46,6 +47,11 @@ public class WalletController {
         List<IndexValue> indexValueList = buildIndexValue(walletReq, account ->
                 walletReq.getIsShowSeed() ? account.getSeed() : account.getPrivateKey());
         Assert.isTrue(indexValueList.size() <= 5, "单次导出不能超过5个账户");
+
+        indexValueList.forEach(item -> {
+            String encryptedValue = AES.encryptWithPassword(item.getValue(), walletReq.getUnlockPassword());
+            item.setValue(encryptedValue);
+        });
         return DataTableVO.create(indexValueList);
     }
 

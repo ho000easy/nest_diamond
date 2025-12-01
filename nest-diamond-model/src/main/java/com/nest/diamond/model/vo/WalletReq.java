@@ -18,5 +18,5 @@ public class WalletReq {
     @JsonDeserialize(using = CommaSeparatedStringToListDeserializer.class)
     private List<Integer> sequenceList;
 //    private Boolean isMix;
-    private String unlockPass;
+    private String unlockPassword;
 }
