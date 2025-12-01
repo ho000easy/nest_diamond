@@ -1,6 +1,7 @@
 package com.nest.diamond.model.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.nest.diamond.common.annos.LogMask;
 import com.nest.diamond.common.config.AESEncryptHandler;
 import com.nest.diamond.common.enums.WalletVendor;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class Account {
     private AccountType type;
     private String address;
 
+    @LogMask
     @TableField(typeHandler = AESEncryptHandler.class)
     private String privateKey;
 
@@ -26,6 +28,7 @@ public class Account {
 
     private Long seedId;
 
+    @LogMask
     @TableField(typeHandler = AESEncryptHandler.class)
     private String seed;
     private String seedPrefix;

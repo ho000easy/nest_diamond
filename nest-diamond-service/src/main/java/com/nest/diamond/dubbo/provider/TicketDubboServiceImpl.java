@@ -42,7 +42,7 @@ public class TicketDubboServiceImpl implements TicketDubboService {
         List<Account> accountList = accountService.findByAddresses(request.getAddressList());
         Assert.isTrue(NumUtils.xEqualsY(accountList.size(), request.getAddressList().size()),
                 String.format("工单中账户个数为 %d,签名系统账户个数为 %d,两边不一致", request.getAddressList().size(), accountList.size()));
-        String airdropName = String.format("%s【%s】【%s】", request.getAirdropOperationName(), request.getAirdropName(), request.getTicketNo());
+        String airdropName = String.format("%s【%s】【%s】", request.getAirdropName(), request.getAirdropOperationName(), request.getTicketNo());
         airdropService.createAirdrop(airdropName, request.getAddressList());
         Airdrop airdrop = airdropService.findByName(airdropName);
 

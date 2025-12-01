@@ -7,6 +7,7 @@ import com.nest.diamond.model.vo.IndexValue;
 import com.nest.diamond.model.vo.WalletReq;
 import com.nest.diamond.service.AccountService;
 import com.nest.diamond.service.AirdropService;
+import com.nest.diamond.web.anno.LogAccess;
 import com.nest.diamond.web.anno.UnLock;
 import com.nest.diamond.web.vo.DataTableVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,32 +37,16 @@ public class WalletController {
         return modelAndView;
     }
 
+    @LogAccess(value = "show_private_key", dailyLimit = 20)
     @UnLock
     @RequestMapping("/wallet/list")
     @ResponseBody
     public DataTableVO<IndexValue> list(WalletReq walletReq) {
-
-        return DataTableVO.create(buildIndexValue(walletReq, account ->
-                walletReq.getIsShowSeed() ? account.getSeed() : account.getPrivateKey()));
-    }
-
-    @UnLock
-    @RequestMapping("/wallet/split1")
-    @ResponseBody
-    public DataTableVO<IndexValue> split1(WalletReq walletReq) {
-        return DataTableVO.create(buildIndexValue(walletReq, account ->
-                walletReq.getIsShowSeed() ? splitSeed(account.getSeed())[0] : account.getPrivateKey().substring(0, 35)));
-    }
-
-    @UnLock
-    @RequestMapping("/wallet/split2")
-    @ResponseBody
-    public DataTableVO<IndexValue> split2(WalletReq walletReq) {
-        return DataTableVO.create(buildIndexValue(walletReq, account ->
-                walletReq.getIsShowSeed() ?
-                        splitSeed(account.getSeed())[1]
-                        : account.getPrivateKey().substring(35)));
-
+        // 根据 isShowSeed 返回 seed 或 privateKey，不做任何截取
+        List<IndexValue> indexValueList = buildIndexValue(walletReq, account ->
+                walletReq.getIsShowSeed() ? account.getSeed() : account.getPrivateKey());
+        Assert.isTrue(indexValueList.size() <= 5, "单次导出不能超过5个账户");
+        return DataTableVO.create(indexValueList);
     }
 
     @RequestMapping("/wallet/addressList")
@@ -81,24 +66,8 @@ public class WalletController {
             return new IndexValue(airdropItemExtend.getSequence(), appliedFunction.apply(account));
         }).collect(Collectors.toList());
         Collections.sort(indexValueList, Comparator.comparing(IndexValue::getIndex));
+        Assert.isTrue(indexValueList.size() <= 5, "单次导出数量不能超过5个");
         return indexValueList;
-    }
-
-    public static String[] splitSeed(String seed) {
-        if (seed == null || seed.trim().isEmpty()) {
-            Assert.isTrue(false, "seed 不能为空");
-        }
-
-        String[] words = seed.trim().split("\\s+");
-        if (words.length != 12) {
-            // 不是12个单词时，直接返回原seed在第一段，第二段为空
-            return new String[]{seed, ""};
-        }
-
-        String part1 = String.join(" ", Arrays.copyOfRange(words, 0, 6));
-        String part2 = String.join(" ", Arrays.copyOfRange(words, 6, 12));
-
-        return new String[]{part1, part2};
     }
 
 

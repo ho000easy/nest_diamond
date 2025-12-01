@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<link href="css/nest/signatureLog.css" rel="stylesheet">
+
+<script src="/js/nest/accessLog.js"></script>
+<body>
+
+<div class="container">
+    <form id="addForm">
+        <div class="row">
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">模块名称</span>
+                    <input name="module" class="form-control" placeholder="例如：查看钱包"
+                           aria-describedby="basic-addon1">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">IP地址</span>
+                    <input name="ipAddress" class="form-control" placeholder="客户端IP">
+                </div>
+            </div>
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">方法名</span>
+                    <input name="methodName" class="form-control" placeholder="类名或方法名">
+                </div>
+            </div>
+            <div class="col-3 mt-3">
+                <button type="button" class="btn btn-primary m-2" id="search">查询</button>
+            </div>
+        </div>
+    </form>
+
+    <br><br>
+    <div class="row">
+        <div class="col-12">
+            <table id="accessLogList" class="stripe" style="font-size: 12px">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class="example-select-all"></th>
+                    <th>模块</th>
+                    <th>方法名</th>
+                    <th>IP地址</th>
+                    <th>耗时(ms)</th>
+                    <th>请求参数</th>
+                    <th>返回结果</th>
+                    <th>创建时间</th>
+                    <th>修改时间</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

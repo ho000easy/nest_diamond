@@ -28,11 +28,11 @@
             <div class="col-3 mt-4">
                 <div class="input-group">
                     <span class="input-group-text">序列</span>
-                    <input name="startSequence" class="form-control" placeholder="0" aria-label="start"
+                    <input name="startSequence" class="form-control" placeholder="1" aria-label="start"
                            aria-describedby="basic-addon1" value="1">
-                    <input name="endSequence" class="form-control" placeholder="50" aria-label="end"
-                           aria-describedby="basic-addon1" value="50">
-                    <input name="sequenceList" class="form-control" placeholder="1,2,3" aria-label="end"
+                    <input name="endSequence" class="form-control" placeholder="5" aria-label="end"
+                           aria-describedby="basic-addon1" value="5">
+                    <input name="sequenceList" class="form-control" placeholder="序号1,序号2..." aria-label="end"
                            aria-describedby="basic-addon1">
                 </div>
             </div>
@@ -40,9 +40,9 @@
             <div class="col-6  mt-3">
                 <button type="button" class="btn btn-outline-primary m-2" id="generateAddress">生成地址</button>
                 <button type="button" class="btn btn-outline-dark m-2" id="splitKey">分裂私钥</button>
-                <button type="button" class="btn btn-outline-dark m-2" id="generateKey">生成私钥</button>
                 <button type="button" class="btn btn-outline-dark m-2" id="splitSeed">分裂种子</button>
-                <button type="button" class="btn btn-outline-dark m-2" id="generateSeed">生成种子</button>
+                <button type="button" class="btn btn-outline-dark m-2" id="generateKey">完整私钥</button>
+                <button type="button" class="btn btn-outline-dark m-2" id="generateSeed">完整种子</button>
             </div>
         </div>
     </form>
@@ -59,7 +59,7 @@
 
             </table>
         </div>
-        <div class="col-3 mt-5">
+        <div class="col-6 mt-5">
             <div class="form-group">
                 <label for="addressText">地址列表</label>
                 <textarea class="form-control rounded-0" id="addressText" rows="14"></textarea>
@@ -133,7 +133,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <input id="unlockPassword" type="password" class="form-control" placeholder="输入密码">
+                <input id="unlockPassword"
+                       type="text"
+                       class="form-control"
+                       placeholder="输入密码"
+                       autocomplete="off"
+                       style="-webkit-text-security: disc;">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>

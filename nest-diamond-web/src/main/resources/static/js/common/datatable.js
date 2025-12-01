@@ -1,3 +1,6 @@
+/**
+ * 支持 url 为空 (初始化为空表格)
+ */
 function multiSelectDataTable(tableId, url, columns, paramsFunc,
                               rowCallBackFunc, columnDefs, footerCallbackFuc,
                               isJson, extraButtons , disableOrdering = false) {
@@ -13,26 +16,8 @@ function multiSelectDataTable(tableId, url, columns, paramsFunc,
     if(columnDefs){
         innerColumnDefs = innerColumnDefs.concat(columnDefs)
     }
-    let ajax = {
-        url: url,
-        type: 'post',
-        data: paramsFunc,
-        dataSrc: function (json) {
-            if (json.message) {
-                $.toast(failToast(json.message, 3000))
-                return [];
-            } else {
-                // 正常返回数据数组
-                return json.data; // 假设正常响应为 { data: [...] }
-            }
-        },
-        error: function (xhr, error, thrown) {
-            $.toast(failToast(thrown))
-        }
-    }
-    if (isJson) {
-        ajax['contentType'] = "application/json; charset=utf-8"
-    }
+
+    // 基础按钮
     let baseButtons = [
         {
             text: '⬜️ 选中当前页',
@@ -47,23 +32,54 @@ function multiSelectDataTable(tableId, url, columns, paramsFunc,
         }
     ];
 
-    // ★ 核心：把额外按钮拼接到默认按钮后面
     const allButtons = extraButtons && Array.isArray(extraButtons)
         ? baseButtons.concat(extraButtons)
         : baseButtons;
-    let table = $(`#${tableId}`).DataTable({
-        ajax: ajax,
+
+    // --- 核心修改开始 ---
+    // 定义基础配置对象
+    let dtOptions = {
         searching: false,
         processing: true,
-        ordering: !disableOrdering,   // ✅ 动态控制排序开关
-        // order: [],
+        ordering: !disableOrdering,
         columnDefs: innerColumnDefs,
         rowCallback: rowCallBackFunc,
         footerCallback: footerCallbackFuc,
         columns: convertColumns(columns),
         dom: '<"top d-flex align-items-center gap-2"lBf>rt<"bottom"ip><"clear">',
         buttons: allButtons
-    });
+    };
+
+    // 判断是否有 URL
+    if (url) {
+        // 有 URL：配置 ajax 请求
+        let ajaxConfig = {
+            url: url,
+            type: 'post',
+            data: paramsFunc,
+            dataSrc: function (json) {
+                if (json.message) {
+                    $.toast(failToast(json.message, 3000))
+                    return [];
+                } else {
+                    return json.data;
+                }
+            },
+            error: function (xhr, error, thrown) {
+                $.toast(failToast(thrown))
+            }
+        };
+        if (isJson) {
+            ajaxConfig['contentType'] = "application/json; charset=utf-8"
+        }
+        dtOptions.ajax = ajaxConfig;
+    } else {
+        // 无 URL：初始化为空数据，避免 404
+        dtOptions.data = [];
+    }
+    // --- 核心修改结束 ---
+
+    let table = $(`#${tableId}`).DataTable(dtOptions);
 
 
     function toggleCurrentPage(dt) {
@@ -73,7 +89,6 @@ function multiSelectDataTable(tableId, url, columns, paramsFunc,
         $cbs.prop('checked', !allChecked);
     }
 
-    // ★ 这里接收“按钮的 jQuery 对象”，不再用 buttonApi.node()
     function updateToggleBtn(dt, $btn) {
         const rows = dt.rows({ page: 'current' }).nodes();
         const $cbs = $('input[type="checkbox"]', rows);
@@ -89,13 +104,11 @@ function multiSelectDataTable(tableId, url, columns, paramsFunc,
         }
     }
 
-    // 翻页/筛选/排序后刷新按钮状态
     table.on('draw.dt', function () {
-        const $btn = $(table.buttons().container()).find('.btn-toggle-current'); // ★ 用类名找按钮
+        const $btn = $(table.buttons().container()).find('.btn-toggle-current');
         updateToggleBtn(table, $btn);
     });
 
-    // 头部复选框
     $('#headerSelectAll').on('click', function () {
         const rows = table.rows({ page: 'current' }).nodes();
         $('input[type="checkbox"]', rows).prop('checked', this.checked);
@@ -103,7 +116,6 @@ function multiSelectDataTable(tableId, url, columns, paramsFunc,
         updateToggleBtn(table, $btn);
     });
 
-    // 行内复选框改变时同步按钮
     table.on('change', 'tbody input[type="checkbox"]', function () {
         const $btn = $(table.buttons().container()).find('.btn-toggle-current');
         updateToggleBtn(table, $btn);
@@ -112,10 +124,7 @@ function multiSelectDataTable(tableId, url, columns, paramsFunc,
     table.on('draw', function() {
         $('.copy-btn').each(function() {
             let copyBtn = $(this);
-            // 获取按钮所在的当前单元格的文本内容
-            let cellText = copyBtn.closest('td').text().trim();  // 获取当前按钮所在的单元格的内容
-
-            // 设置data-clipboard-text为当前单元格的文本
+            let cellText = copyBtn.closest('td').text().trim();
             copyBtn.attr('data-clipboard-text', cellText);
         })
     })
@@ -125,7 +134,7 @@ function multiSelectDataTable(tableId, url, columns, paramsFunc,
         var rowsOnPage = table.rows({ page: 'current' }).count();
 
         if (info.pages > 0 && rowsOnPage === 0 && info.page > 0) {
-            table.page(info.page - 1).draw(false); // 回上一页但不重置分页
+            table.page(info.page - 1).draw(false);
         }
     });
 
@@ -153,9 +162,22 @@ function multiSelectDataTable(tableId, url, columns, paramsFunc,
     return table;
 }
 
+/**
+ * 支持 url 为空 (初始化为空表格)
+ */
 function dataTable(tableId, url, columns, queryParams, rowCallBackFunc, columnDefs) {
-    let table = $(`#${tableId}`).DataTable({
-        ajax: {
+    // --- 核心修改开始 ---
+    let dtOptions = {
+        columnDefs: columnDefs,
+        searching: false,
+        processing: true,
+        rowCallback: rowCallBackFunc,
+        columns: convertColumns(columns),
+    };
+
+    if (url) {
+        // 有 URL：配置 ajax
+        dtOptions.ajax = {
             url: url,
             type: 'post',
             data: queryParams,
@@ -164,21 +186,20 @@ function dataTable(tableId, url, columns, queryParams, rowCallBackFunc, columnDe
                     $.toast(failToast(json.message, 3000))
                     return [];
                 } else {
-                    // 正常返回数据数组
-                    return json.data; // 假设正常响应为 { data: [...] }
+                    return json.data;
                 }
             },
             error: function (xhr, error, thrown) {
                 $.toast(failToast(thrown))
             }
-        },
-        columnDefs: columnDefs,
-        searching: false,
-        "processing": true,
-        // info: false,
-        rowCallback: rowCallBackFunc,
-        columns: convertColumns(columns),
-    });
+        };
+    } else {
+        // 无 URL：初始化为空数据
+        dtOptions.data = [];
+    }
+    // --- 核心修改结束 ---
+
+    let table = $(`#${tableId}`).DataTable(dtOptions);
 
     $(`#${tableId} tbody`).on('dblclick', 'td', function() {
         let data = $(this).text();

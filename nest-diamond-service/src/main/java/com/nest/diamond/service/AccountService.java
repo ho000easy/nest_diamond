@@ -72,15 +72,6 @@ public class AccountService {
     public Account findById(Long id) {
         return accountIService.getById(id);
     }
-
-    public List<Account> findAll() {
-        return accountIService.findAll();
-    }
-
-    public List<Account> findAllNonCustody() {
-        return accountIService.findAllNonCustody();
-    }
-
     public List<Account> findByIds(List<Long> ids) {
         return accountIService.findByIds(ids);
     }
@@ -110,17 +101,6 @@ public class AccountService {
         List<Account> accountList = findAccounts(seedId, hdIndexList);
         return accountList.stream().map(Account::getAddress).collect(Collectors.toList());
     }
-
-    public List<String> findPrivateKeys(Long seedId, Integer startHDIndex, Integer endHDIndex) {
-        List<Account> accountList = findAccounts(seedId, startHDIndex, endHDIndex);
-        return accountList.stream().map(Account::getPrivateKey).collect(Collectors.toList());
-    }
-
-    public List<Credentials> findCredentialsList(Long seedId, Integer startHDIndex, Integer endHDIndex) {
-        List<Account> accountList = findAccounts(seedId, startHDIndex, endHDIndex);
-        return accountList.stream().map(account -> Credentials.create(account.getPrivateKey())).collect(Collectors.toList());
-    }
-
 
     public List<String> findAddresses(Long seedId, Integer startHDIndex, Integer endHDIndex) {
         List<Account> accountList = findAccounts(seedId, startHDIndex, endHDIndex);
