@@ -96,9 +96,15 @@
                 <artifactId>dubbo-spring-boot-starter</artifactId>
                 <version>${dubbo.version}</version>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.apache.dubbo.extensions</groupId>-->
+<!--                <artifactId>dubbo-serialization-jackson</artifactId>-->
+<!--                <version>${dubbo.version}</version>-->
+<!--            </dependency>-->
+
             <dependency>
-                <groupId>org.apache.dubbo.extensions</groupId>
-                <artifactId>dubbo-serialization-jackson</artifactId>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-rpc-triple</artifactId>
                 <version>${dubbo.version}</version>
             </dependency>
 

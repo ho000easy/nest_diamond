@@ -51,6 +51,10 @@
             <artifactId>dubbo-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-rpc-triple</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-test</artifactId>
         </dependency>
