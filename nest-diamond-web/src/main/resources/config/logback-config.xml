@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="true">
     <contextName>depository</contextName>
+    <property name="APP_NAME" value="nest_diamond"/>
 
     <!-- 日志输出级别 -->
     <property name="LEVEL" value="info"/>
@@ -17,9 +18,9 @@
     </appender>
     <!-- 默认日志输出文件 -->
     <appender name="DEFAULT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/default.log</file>
+        <file>${LOG_HOME}/${APP_NAME}_default.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/default.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/${APP_NAME}_default.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
@@ -30,12 +31,12 @@
     </appender>
     <!-- 错误日志输出文件 -->
     <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/error.log</file>
+        <file>${LOG_HOME}/${APP_NAME}_error.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/error.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/${APP_NAME}_error.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
@@ -46,12 +47,12 @@
     </appender>
     <!-- 业务日志输出文件 -->
     <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/service.log</file>
+        <file>${LOG_HOME}/${APP_NAME}_service.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/service.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/%d{yyyyMMdd}/${APP_NAME}_service.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>

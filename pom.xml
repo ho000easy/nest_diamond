@@ -95,6 +95,12 @@
                 <groupId>org.apache.dubbo</groupId>
                 <artifactId>dubbo-spring-boot-starter</artifactId>
                 <version>${dubbo.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.dubbo</groupId>
+                        <artifactId>dubbo-serialization-fastjson</artifactId>  <!-- fastjson1 -->
+                    </exclusion>
+                </exclusions>
             </dependency>
 <!--            <dependency>-->
 <!--                <groupId>org.apache.dubbo.extensions</groupId>-->
@@ -193,6 +199,11 @@
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-x-discovery</artifactId>
                 <version>5.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.83</version>
             </dependency>
             <!-- 已删除的高危/无用依赖：
                  fastjson 1.2.58（严重漏洞）、hibernate-validator 5.x（SB3 自带8.x）、
