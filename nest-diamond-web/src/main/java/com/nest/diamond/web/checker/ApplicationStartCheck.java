@@ -16,8 +16,8 @@ import java.util.Properties;
 public class ApplicationStartCheck {
     public static void isValidationSuccessful(String[] args) {
         Properties properties = getProperties(args);
-        String configValue = properties.getProperty("nest_diamond.console.input");
-        boolean isOpen = StringUtils.isNotEmpty(configValue) && StringUtils.equals(configValue,"open");
+        String configValue = properties.getProperty("nest_diamond.aes.check");
+        boolean isOpen = StringUtils.isNotEmpty(configValue) && StringUtils.equals(configValue,"true");
         if(!isOpen){
             return;
         }

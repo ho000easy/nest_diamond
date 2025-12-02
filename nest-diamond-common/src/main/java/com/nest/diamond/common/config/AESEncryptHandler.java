@@ -55,18 +55,12 @@ public class AESEncryptHandler extends BaseTypeHandler {
         }
 
         String key = aesKeyConfig.getAesKey();
-        Boolean checkOpen = checkOpen(aesKeyConfig);
-        if (checkOpen) {
+        if (aesKeyConfig.getIsAesCheck()) {
             if (StringUtils.isEmpty(INPUT_KEY)) {
                 throw new IllegalArgumentException("控制台输入AES KEY不能为空");
             }
             key = key + INPUT_KEY;
         }
         return key;
-    }
-
-    public Boolean checkOpen(AESKeyConfig aesKeyConfig){
-        return StringUtils.isNotEmpty(aesKeyConfig.getConsoleInput())
-                && StringUtils.equals(aesKeyConfig.getConsoleInput(), "open");
     }
 }
