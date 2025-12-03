@@ -136,7 +136,7 @@ public class TicketService {
         }
 
         // 转账校验（data 为空且 value > 0）
-        if (StringUtils.isEmpty(rawTx.getData()) && rawTx.getValue().compareTo(BigInteger.ZERO) > 0) {
+        if (StringUtils.isEmpty(rawTx.getData())) {
             Assert.isTrue(ticket.getIsAllowTransfer(),
                     "当前工单不允许转账");
             return;
