@@ -18,8 +18,8 @@ public class ApplicationBootstrap {
     @SneakyThrows
     public static void main(String[] args) {
         initialize();
-        TestingServer server = new TestingServer(2181);
-        server.start();
+//        TestingServer server = new TestingServer(2181);
+//        server.start();
 
         ApplicationStartCheck.isValidationSuccessful(args);
 
