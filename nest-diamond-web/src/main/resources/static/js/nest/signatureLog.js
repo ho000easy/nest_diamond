@@ -17,15 +17,7 @@ $(document).ready(function () {
         {
             targets: 6, // 假设是第4列
             render: function (data, type, row) {
-                const safeData = String(data).replace(/"/g, '&quot;');
-                return `
-                <span class="dt-text-truncate" 
-                      data-bs-toggle="tooltip" 
-                      data-bs-placement="top" 
-                      title="${safeData}">
-                    ${data}
-                </span>
-                `
+                return DtRenderUtil.renderCode(data, type);
             }
         }
     ]
