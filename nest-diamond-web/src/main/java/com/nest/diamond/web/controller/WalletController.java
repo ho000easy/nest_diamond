@@ -1,5 +1,6 @@
 package com.nest.diamond.web.controller;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.nest.diamond.common.util.AES;
 import com.nest.diamond.model.bo.AirdropItemExtend;
@@ -65,6 +66,9 @@ public class WalletController {
         List<AirdropItemExtend> airdropItemExtendList = airdropService.findAirdropItemExtendByAirdropId(walletReq.getAirdropId(), walletReq.getStartSequence(), walletReq.getEndSequence(), walletReq.getSequenceList());
         Map<String, AirdropItemExtend> airdropItemExtendMap = Maps.uniqueIndex(airdropItemExtendList, AirdropItemExtend::getAccountAddress);
         List<String> addressList = airdropItemExtendList.stream().map(AirdropItemExtend::getAccountAddress).toList();
+        if(addressList.isEmpty()){
+            return Lists.newArrayList();
+        }
         List<Account> accountList = accountService.findByAddresses(addressList);
 
         List<IndexValue> indexValueList = accountList.stream().map(account -> {
