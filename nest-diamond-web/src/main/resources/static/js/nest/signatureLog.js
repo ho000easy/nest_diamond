@@ -4,7 +4,7 @@ $(document).ready(function () {
 
     let columns = [
         'id', 'ticketNo', 'airdropOperationName', 'signAddress', 'bizOrderNo', 'rawData', 'signedData',
-        'contractName', 'chainName',
+        'contractName', 'contractAddress', 'chainName',
         'signType', 'signTime', 'createTime'
     ];
     let columnDef = [
