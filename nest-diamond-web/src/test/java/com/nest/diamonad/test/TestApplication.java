@@ -1,4 +1,4 @@
-package com.nest.diamond.test.service;
+package com.nest.diamonad.test;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;

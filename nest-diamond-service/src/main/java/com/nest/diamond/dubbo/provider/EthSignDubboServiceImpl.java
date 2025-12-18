@@ -168,6 +168,7 @@ public class EthSignDubboServiceImpl implements EthSignDubboService {
                     .findBy(ticket.getTicketNo(), signRawTransactionRequest.getChainId(), rawTransaction.getTo());
             signatureLog.setContractInstanceSnapshotId(snapshot.getId());
             signatureLog.setContractName(snapshot.getContractName());
+            signatureLog.setContractAddress(snapshot.getAddress());
         }
         signatureLogService.insert(signatureLog);
         return signatureLog;

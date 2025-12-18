@@ -50,6 +50,7 @@ public class SignatureLog {
 
     /** 合约名称 */
     private String contractName;
+    private String contractAddress;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

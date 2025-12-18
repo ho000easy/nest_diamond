@@ -8,11 +8,11 @@ import java.util.Date;
 
 @Data
 public class SignatureLogQuery {
-    private String address;
+    private String ticketNo;
+    private String signAddress;
     private String bizOrderNo;
-    private Long airdropOperationId;
-    private Long contractInstanceSnapshotId;
+    private String airdropOperationName;
+    private String contractAddress;
+    private Long chainId;
     private SignType signType;
-    private Date signTimeBegin;
-    private Date signTimeEnd;
 }

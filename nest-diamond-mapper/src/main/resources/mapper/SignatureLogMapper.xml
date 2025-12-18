@@ -5,26 +5,27 @@
     <select id="search" resultType="com.nest.diamond.model.domain.SignatureLog">
         SELECT * FROM signature_log
         <where>
-            <if test="address != null and address != ''">
-                AND address = #{address}
+            <if test="ticketNo != null and ticketNo != ''">
+                AND ticket_no = #{ticketNo}
+            </if>
+            <if test="signAddress != null and signAddress != ''">
+                AND sign_address = #{signAddress}
             </if>
             <if test="bizOrderNo != null and bizOrderNo != ''">
                 AND biz_order_no = #{bizOrderNo}
             </if>
-            <if test="airdropOperationId != null">
-                AND airdrop_operation_id = #{airdropOperationId}
+
+            <if test="airdropOperationName != null and airdropOperationName != ''">
+                AND airdrop_operation_name = #{airdropOperationName}
             </if>
-            <if test="contractInstanceSnapshotId != null">
-                AND contract_instance_snapshot_id = #{contractInstanceSnapshotId}
+            <if test="contractAddress != null and contractAddress != ''">
+                AND contract_address = #{contractAddress}
+            </if>
+            <if test="chainId != null">
+                AND chain_id = #{chainId}
             </if>
             <if test="signType != null">
                 AND sign_type = #{signType}
-            </if>
-            <if test="signTimeBegin != null">
-                AND sign_time >= #{signTimeBegin}
-            </if>
-            <if test="signTimeEnd != null">
-                AND sign_time &lt;= #{signTimeEnd}
             </if>
         </where>
         ORDER BY sign_time DESC
