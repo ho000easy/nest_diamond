@@ -35,7 +35,7 @@ public class CreateSignTicketRequest extends BaseDTO {
     @NotNull(message = "结束时间不能为空")
     private Date endTime;
 
-    @NotEmpty(message = "至少选择一个合约实例")
+//    @NotEmpty(message = "至少选择一个合约实例")
     private List<ContractInstanceRef> contractInstanceRefs;
 
     @NotNull(message = "是否允许转账不能为空")
