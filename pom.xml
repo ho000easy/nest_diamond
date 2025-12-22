@@ -212,6 +212,7 @@
         </dependencies>
     </dependencyManagement>
 
+
     <!-- 插件统一管理（可选优化） -->
     <build>
         <pluginManagement>
