@@ -10,6 +10,7 @@ import java.util.List;
 public class WalletReq {
 //    private Long seedId;
     private Long airdropId;
+    private Long seedId;
     private Integer startSequence;
     private Integer endSequence;
 
