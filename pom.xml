@@ -205,6 +205,7 @@
                 <artifactId>fastjson</artifactId>
                 <version>1.2.83</version>
             </dependency>
+
             <!-- 已删除的高危/无用依赖：
                  fastjson 1.2.58（严重漏洞）、hibernate-validator 5.x（SB3 自带8.x）、
                  springfox-swagger2（已废弃）、commons-beanutils（性能差） -->
