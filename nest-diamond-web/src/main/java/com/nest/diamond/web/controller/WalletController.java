@@ -50,6 +50,8 @@ public class WalletController {
     @RequestMapping("/wallet/list")
     @ResponseBody
     public DataTableVO<IndexValue> list(WalletReq walletReq) {
+        boolean startAndEndSequenceIsNotNull = walletReq.getStartSequence() != null && walletReq.getEndSequence() != null;
+        Assert.isTrue(startAndEndSequenceIsNotNull || CollectionUtils.isNotEmpty(walletReq.getSequenceList()), "序列不能为空");
         // 根据 isShowSeed 返回 seed 或 privateKey，不做任何截取
         List<IndexValue> indexValueList = buildIndexValue(walletReq, account -> {
                     if (walletReq.getIsShowSeed()) {
@@ -82,7 +84,12 @@ public class WalletController {
 //        if(addressList.isEmpty()){
 //            return Lists.newArrayList();
 //        }
-        List<Account> accountList = accountService.findAccounts(walletReq.getSeedId(), walletReq.getStartSequence(), walletReq.getEndSequence());
+        List<Account> accountList = null;
+        if(CollectionUtils.isNotEmpty(walletReq.getSequenceList())){
+            accountList = accountService.findAccounts(walletReq.getSeedId(), walletReq.getSequenceList());
+        }else{
+            accountList = accountService.findAccounts(walletReq.getSeedId(), walletReq.getStartSequence(), walletReq.getEndSequence());
+        }
 
         List<IndexValue> indexValueList = accountList.stream().map(account -> {
 //            AirdropItemExtend airdropItemExtend = airdropItemExtendMap.get(account.getAddress());
