@@ -19,8 +19,7 @@
                         <th:block th:each="walletVendor, iterStat: ${walletVendorList}">
                             <option th:data-tokens="${walletVendor}"
                                     th:text="${walletVendor}"
-                                    th:value="${walletVendor}"
-                                    th:selected="${iterStat.index == 0}"></option>
+                                    th:value="${walletVendor}"></option>
                         </th:block>
                     </select>
                 </div>
@@ -32,56 +31,15 @@
                     <select name="walletGenerateType" class="selectpicker form-control"
                             data-live-search="true">
                         <option data-tokens="请选择" text="请选择" value="" selected>请选择</option>
-                        <option data-tokens="单个种子" text="单个种子" value="SINGLE_SEED" selected>单个种子</option>
+                        <option data-tokens="单个种子" text="单个种子" value="SINGLE_SEED">单个种子</option>
                         <option data-tokens="批量种子" text="批量种子" value="MULTI_SEED">批量种子</option>
                         <option data-tokens="批量私钥" text="批量私钥" value="MULTI_PRIVATE_KEY">批量私钥</option>
                         <option data-tokens="批量地址" text="批量地址" value="MULTI_ADDRESS">批量地址</option>
                     </select>
                 </div>
             </div>
-            <div class="col-3 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">单种子钱包数量</span>
-                    <input name="count" class="form-control" placeholder="500"
-                           aria-describedby="basic-addon1" value="500">
-                </div>
-            </div>
-            <div class="col-3 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">是否保留种子</span>
-                    <select name="isReserveSeed" class="selectpicker form-control"
-                            data-live-search="true">
-                        <option data-tokens="是" text="是" value="true" >是</option>
-                        <option data-tokens="否" text="否" value="false" selected>否</option>
-                    </select>
-                </div>
-            </div>
 
-            <div class="col-4 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">种子列表</span>
-                    <textarea name="seedWordsList" class="form-control" placeholder="请输入种子"
-                              aria-describedby="basic-addon1" value="" rows="2"></textarea>
-                    <input id="hiddenSeedId" type="hidden"/>
-                </div>
-            </div>
-            <div class="col-4 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">私钥列表</span>
-                    <textarea name="privateKeyList" class="form-control" placeholder="请输私钥"
-                              aria-describedby="basic-addon1" value="" rows="2"></textarea>
-                </div>
-            </div>
-            <div class="col-4 mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">地址列表</span>
-                    <textarea name="addressList" class="form-control" placeholder="请输地址"
-                              aria-describedby="basic-addon1" value="" rows="2"></textarea>
-                </div>
-            </div>
-
-
-            <div class="col-4 mt-4">
+            <div class="col-4 mt-3">
                 <div class="input-group">
                     <button type="button" class="btn btn-primary m-2" id="search">查询</button>
                     <button type="button" class="btn btn-success m-2" id="addSeed">添加</button>
@@ -102,6 +60,8 @@
                 <tr>
                     <th><input type="checkbox" name="select_all" value="1" class="example-select-all"></th>
                     <th>前缀</th>
+                    <th>种子类型</th>
+                    <th>钱包</th>
                     <th>备注</th>
                     <th>创建时间</th>
                 </tr>
@@ -138,6 +98,116 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="addSeedModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">添加资产配置</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="seedAddForm">
+                    <div class="row">
+
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text justify-content-center"
+                                      style="width: 130px;">钱包供应商</span>
+                                <select name="walletVendor" class="selectpicker form-control" data-live-search="true">
+                                    <th:block th:each="walletVendor : ${walletVendorList}">
+                                        <option th:value="${walletVendor}" th:text="${walletVendor}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-6 mt-4">
+                            <div class="input-group">
+                                <span class="input-group-text justify-content-center"
+                                      style="width: 130px;">生成类型</span>
+                                <select id="modalWalletGenerateType" name="walletGenerateType"
+                                        class="selectpicker form-control">
+                                    <option value="SINGLE_SEED" selected>单个种子</option>
+                                    <option value="MULTI_SEED">批量种子</option>
+                                    <option value="MULTI_PRIVATE_KEY">批量私钥</option>
+                                    <option value="MULTI_ADDRESS">批量地址</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="dynamicArea" >
+
+                        <div class="area-type-content" id="area-SINGLE_SEED">
+                            <div class="col-12 mt-4">
+                                <div class="input-group">
+                                    <span class="input-group-text justify-content-center"
+                                          style="width: 130px;">种子内容</span>
+                                    <textarea name="singleSeedWords" class="form-control" rows="2"
+                                              placeholder="请输入助记词..."></textarea>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <div class="input-group">
+                                    <span class="input-group-text justify-content-center"
+                                          style="width: 130px;">钱包数量</span>
+                                    <input name="count" class="form-control" value="500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="area-type-content d-none" id="area-MULTI_SEED">
+                            <div class="col-12 mt-4">
+                                <div class="input-group">
+                                    <span class="input-group-text justify-content-center"
+                                          style="width: 130px;">种子列表</span>
+                                    <textarea name="multiSeedWordsList" class="form-control" rows="5"
+                                              placeholder="一行一个种子..."></textarea>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <div class="input-group">
+                                    <span class="input-group-text justify-content-center"
+                                          style="width: 130px;">是否保留种子</span>
+                                    <select name="isReserveSeed" class="selectpicker form-control">
+                                        <option value="true">是</option>
+                                        <option value="false" selected>否</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="area-type-content d-none" id="area-MULTI_PRIVATE_KEY">
+                            <div class="col-12 mt-4">
+                                <div class="input-group">
+                                    <span class="input-group-text justify-content-center"
+                                          style="width: 130px;">私钥列表</span>
+                                    <textarea name="privateKeyList" class="form-control" rows="6"
+                                              placeholder="一行一个私钥..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="area-type-content d-none" id="area-MULTI_ADDRESS">
+                            <div class="col-12 mt-4">
+                                <div class="input-group">
+                                    <span class="input-group-text justify-content-center"
+                                          style="width: 130px;">地址列表</span>
+                                    <textarea name="addressList" class="form-control" rows="6"
+                                              placeholder="一行一个地址..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="confirmAddSeed">确认提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 
 

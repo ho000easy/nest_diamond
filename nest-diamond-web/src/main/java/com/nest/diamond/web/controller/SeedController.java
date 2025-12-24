@@ -3,6 +3,7 @@ package com.nest.diamond.web.controller;
 import com.nest.diamond.common.enums.WalletGenerateType;
 import com.nest.diamond.common.enums.WalletVendor;
 import com.nest.diamond.model.domain.Seed;
+import com.nest.diamond.model.domain.query.SeedQuery;
 import com.nest.diamond.model.vo.AddSeedReq;
 import com.nest.diamond.model.vo.ApiResult;
 import com.nest.diamond.service.SeedService;
@@ -49,10 +50,10 @@ public class SeedController {
         return ApiResult.success();
     }
 
-    @RequestMapping("/seed/query")
+    @RequestMapping("/seed/search")
     @ResponseBody
-    public DataTableVO<Seed> seedQuery(String prefix) {
-        return DataTableVO.create(seedService.search(prefix));
+    public DataTableVO<Seed> seedQuery(SeedQuery seedQuery) {
+        return DataTableVO.create(seedService.search(seedQuery));
     }
 
     @RequestMapping("/seed/all")
