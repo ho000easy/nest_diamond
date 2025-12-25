@@ -9,7 +9,19 @@
 <div class="container">
     <form id="addForm">
         <div class="row">
-
+            <div class="col-3 mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">Seed</span>
+                    <select name="id" class="selectpicker form-control" data-live-search="true">
+                        <option data-tokens="请选择" text="请选择" value="">请选择</option>
+                        <th:block th:each="seed, iterStat: ${seedList}">
+                            <option th:data-tokens="${seed.seedPrefix}"
+                                    th:text="${seed.seedPrefix}"
+                                    th:value="${seed.id}" th:selected="${seed.id} == ${seedId}"></option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
             <div class="col-3 mt-4">
                 <div class="input-group">
                     <span class="input-group-text">钱包供应商</span>
