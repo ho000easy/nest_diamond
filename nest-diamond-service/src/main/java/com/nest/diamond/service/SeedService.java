@@ -12,6 +12,7 @@ import com.nest.diamond.common.util.concurrent.ParallelUtil;
 import com.nest.diamond.iservice.SeedIService;
 import com.nest.diamond.model.domain.Account;
 import com.nest.diamond.model.domain.Seed;
+import com.nest.diamond.model.domain.query.SeedQuery;
 import com.nest.diamond.model.vo.AddSeedReq;
 import lombok.extern.slf4j.Slf4j;
 import org.p2p.solanaj.core.SolanaAccount;
@@ -59,14 +60,16 @@ public class SeedService {
         return seedIService.findBySeedPrefix(seedPrefix);
     }
 
-    public List<Seed> search(String prefix) {
-        return seedIService.search(prefix);
+    public List<Seed> search(SeedQuery seedQuery) {
+        return seedIService.search(seedQuery);
     }
 
 
-    public void createSeed(String seedPrefix) {
+    public void createSeed(String seedPrefix, WalletVendor walletVendor, WalletGenerateType walletGenerateType) {
         Seed seed = new Seed();
         seed.setSeedPrefix(seedPrefix);
+        seed.setWalletGenerateType(walletGenerateType);
+        seed.setWalletVendor(walletVendor);
         seedIService.save(seed);
     }
 
@@ -74,9 +77,17 @@ public class SeedService {
     public void createAccounts(AddSeedReq addSeedReq) {
         Stopwatch stopwatch = Stopwatch.createStarted();
 
-        String seedPrefix = seedPrefix(addSeedReq.getSeedWordsList().get(0));
+        String seedPrefix = null;
+        if (addSeedReq.getWalletGenerateType() == WalletGenerateType.MULTI_PRIVATE_KEY
+                || addSeedReq.getWalletGenerateType() == WalletGenerateType.MULTI_ADDRESS) {
+            String seed = Bip44Util.generateSeed();
+            String[] words = seed.split(" ");
+            seedPrefix = words[0] + " " + words[1];
+        } else {
+            seedPrefix = seedPrefix(addSeedReq.getSeedWordsList().get(0));
+        }
 
-        createSeed(seedPrefix);
+        createSeed(seedPrefix, addSeedReq.getWalletVendor(), addSeedReq.getWalletGenerateType());
 
         Seed _seed = seedIService.findBySeedPrefix(seedPrefix);
         log.info("插入seed耗时 {}", stopwatch.stop());

@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nest.diamond.iservice.SeedIService;
 import com.nest.diamond.mapper.SeedMapper;
 import com.nest.diamond.model.domain.Seed;
+import com.nest.diamond.model.domain.query.SeedQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,11 +29,9 @@ public class SeedIServiceImpl extends ServiceImpl<SeedMapper, Seed> implements S
     }
 
     @Override
-    public List<Seed> search(String prefix) {
-        LambdaQueryWrapper<Seed> queryWrapper = new QueryWrapper<Seed>().lambda();
-        if(prefix != null){
-            queryWrapper.like(Seed::getSeedPrefix, prefix);
-        }
-        return super.list(queryWrapper);
+    public List<Seed> search(SeedQuery seedQuery) {
+        return baseMapper.search(seedQuery);
     }
+
+
 }

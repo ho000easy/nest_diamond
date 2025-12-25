@@ -65,7 +65,7 @@ public class SyncAccountDubboServiceImpl implements SyncAccountDubboService {
             Assert.isTrue(StringUtils.isNotEmpty(seedPrefix), "seed prefix不能为空");
             Seed seed = seedService.findBySeedPrefix(seedPrefix);
             if(seed == null){
-                seedService.createSeed(seedPrefix);
+                seedService.createSeed(seedPrefix, null, null);
             }
         });
         List<Seed> allSeedList = seedService.allSeeds();

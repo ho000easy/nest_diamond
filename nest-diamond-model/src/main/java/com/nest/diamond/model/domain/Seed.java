@@ -1,6 +1,8 @@
 package com.nest.diamond.model.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.nest.diamond.common.enums.WalletGenerateType;
+import com.nest.diamond.common.enums.WalletVendor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +16,9 @@ public class Seed {
     private Long id;
 
     private String seedPrefix;
+    private WalletGenerateType walletGenerateType;
 
+    private WalletVendor walletVendor;
     private String remark;
 
     @TableField(fill = FieldFill.INSERT)
