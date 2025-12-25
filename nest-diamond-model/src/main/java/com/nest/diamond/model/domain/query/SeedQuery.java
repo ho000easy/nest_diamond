@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class SeedQuery {
-    private String seedPrefix;
+    private Long id;
     private WalletGenerateType walletGenerateType;
     private WalletVendor walletVendor;
 }
