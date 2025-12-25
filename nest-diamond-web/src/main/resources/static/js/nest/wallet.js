@@ -217,4 +217,48 @@ $(document).ready(function () {
             return "解密失败";
         }
     }
+
+    /// =============================================
+    // 严格三选一互斥：序列范围（start+end作为一个整体）、序列列表、地址
+    // 任意一组有值 → 清空另外两组
+    // =============================================
+    const $startSeq    = $('input[name="startSequence"]');
+    const $endSeq      = $('input[name="endSequence"]');
+    const $seqList     = $('input[name="sequenceList"]');
+    const $address     = $('input[name="address"]');
+
+    // 序列范围作为一个组
+    const $sequenceRange = $startSeq.add($endSeq);
+
+    // 三个互斥组
+    const $groupSequence = $sequenceRange;      // 组1: 序列范围
+    const $groupSeqList  = $seqList;            // 组2: 序列列表
+    const $groupAddress  = $address;            // 组3: 地址
+
+    const $allInputs = $groupSequence.add($groupSeqList).add($groupAddress);
+
+    $allInputs.on('input change', function () {
+        const $this = $(this);
+        const currentVal = $this.val().trim();
+
+        if (currentVal !== '') {
+            // 判断当前输入属于哪个组
+            const isSequenceRange = $groupSequence.is($this);
+            const isSeqList       = $groupSeqList.is($this);
+            const isAddress       = $groupAddress.is($this);
+
+            // 清空其他两个组
+            if (isSequenceRange) {
+                $groupSeqList.val('').trigger('change');
+                $groupAddress.val('').trigger('change');
+            } else if (isSeqList) {
+                $groupSequence.val('').trigger('change');
+                $groupAddress.val('').trigger('change');
+            } else if (isAddress) {
+                $groupSequence.val('').trigger('change');
+                $groupSeqList.val('').trigger('change');
+            }
+        }
+    });
+
 })

@@ -51,7 +51,8 @@ public class WalletController {
     @ResponseBody
     public DataTableVO<IndexValue> list(WalletReq walletReq) {
         boolean startAndEndSequenceIsNotNull = walletReq.getStartSequence() != null && walletReq.getEndSequence() != null;
-        Assert.isTrue(startAndEndSequenceIsNotNull || CollectionUtils.isNotEmpty(walletReq.getSequenceList()), "序列不能为空");
+        boolean isHasTarget = startAndEndSequenceIsNotNull || CollectionUtils.isNotEmpty(walletReq.getSequenceList()) || StringUtils.isNotEmpty(walletReq.getAddress());
+        Assert.isTrue(isHasTarget, "序列和地址不能全部为空");
         // 根据 isShowSeed 返回 seed 或 privateKey，不做任何截取
         List<IndexValue> indexValueList = buildIndexValue(walletReq, account -> {
                     if (walletReq.getIsShowSeed()) {
@@ -84,12 +85,7 @@ public class WalletController {
 //        if(addressList.isEmpty()){
 //            return Lists.newArrayList();
 //        }
-        List<Account> accountList = null;
-        if(CollectionUtils.isNotEmpty(walletReq.getSequenceList())){
-            accountList = accountService.findAccounts(walletReq.getSeedId(), walletReq.getSequenceList());
-        }else{
-            accountList = accountService.findAccounts(walletReq.getSeedId(), walletReq.getStartSequence(), walletReq.getEndSequence());
-        }
+        List<Account> accountList = getAccounts(walletReq);
 
         List<IndexValue> indexValueList = accountList.stream().map(account -> {
 //            AirdropItemExtend airdropItemExtend = airdropItemExtendMap.get(account.getAddress());
@@ -98,6 +94,16 @@ public class WalletController {
         Collections.sort(indexValueList, Comparator.comparing(IndexValue::getIndex));
         Assert.isTrue(indexValueList.size() <= 5, "单次导出数量不能超过5个");
         return indexValueList;
+    }
+
+    private List<Account> getAccounts(WalletReq walletReq) {
+        if (StringUtils.isNotEmpty(walletReq.getAddress())) {
+            return accountService.findByAddresses(Lists.newArrayList(walletReq.getAddress()));
+        }
+        if (CollectionUtils.isNotEmpty(walletReq.getSequenceList())) {
+            return accountService.findAccounts(walletReq.getSeedId(), walletReq.getSequenceList());
+        }
+        return accountService.findAccounts(walletReq.getSeedId(), walletReq.getStartSequence(), walletReq.getEndSequence());
     }
 
 
