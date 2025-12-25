@@ -15,6 +15,7 @@ public class WalletReq {
     private Integer endSequence;
 
     private Boolean isShowSeed;
+    private String address;
 
     @JsonDeserialize(using = CommaSeparatedStringToListDeserializer.class)
     private List<Integer> sequenceList;
